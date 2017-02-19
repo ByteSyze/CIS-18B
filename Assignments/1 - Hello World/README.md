@@ -3,6 +3,10 @@ ___
 
 The obligatory "HelloWorld" program.
 
+*Note: The design of this HelloWorld program is quick and lazy, because the
+point of the program is to test a fully working environment and not to
+create the most extensive HelloWorld program ever.*
+
 My implementation of the HelloWorld program utilizes Swing and the
 JDBC API (intended for the Connector/J JDBC Type 4 Driver in particular.)
 
@@ -18,7 +22,7 @@ This project consists of 2 Java files:
   and displays them as a spinning "carousel".
 
   WordCarousel overrides the paint() method such that every time paint() is
-  called, its list of words are drawn directly unto the panel at an angle
+  called, its list of words are drawn directly onto the panel at an angle
   proportional to the time since the last paint() call.
 
 **CarouselUpdater**
