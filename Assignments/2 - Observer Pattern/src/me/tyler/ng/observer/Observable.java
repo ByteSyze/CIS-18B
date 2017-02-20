@@ -29,22 +29,32 @@ public class Observable<T> implements IObservable<T>
 	@Override
 	public void removeObserver(IObserver<T> observer) throws Exception
 	{
-		if(!observers.contains(observer))
+		boolean removed = false;
+		
+		for(IObserver<T> o : observers)
+		{
+			//Check if observer is an exact or similar copy of an already registered observer.
+			if((o == observer) || o.getUUID().equalsIgnoreCase(observer.getUUID()))
+			{
+				observers.remove(o);
+				removed = true;
+				
+				break;
+			}
+		}
+		
+		if(!removed)
 		{
 			throw new Exception("Observer is not currently observing: " + observer);
-		}
-		else
-		{
-			observers.remove(observer);
 		}
 	}
 
 	@Override
-	public void notifyObservers(IObservable<T> observable, T arg)
+	public void notifyObservers(T arg)
 	{
 		for(IObserver<T> observer : observers)
 		{
-			observer.update(arg);
+			observer.update(this, arg);
 		}
 	}
 

@@ -27,5 +27,4 @@ public class NGSubscriber implements IObserver<String>
 		//Use the subscriber's street address as a unique way of identifying them.
 		return streetAddress;
 	}
-	
 }
