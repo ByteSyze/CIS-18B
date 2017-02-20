@@ -3,14 +3,15 @@ package me.tyler.ng.observer;
 /**
  * Generic interface for an observer.
  * */
-public interface IObserver<T> 
+public interface Observer<T> 
 {
 	/**
-	 * Called by any Observables that this Observer is listening to.
+	 * Called by Observables that this Observer is listening to.
 	 * 
 	 * @param	observable		The Observable that changed
+	 * @param	arg				The new information for the observer
 	 * */
-	public void update(IObservable<T> observable, T arg);
+	public void update(Observable<T> observable, T arg);
 	
 	/**
 	 * Returns a unique identifier for this Observer.

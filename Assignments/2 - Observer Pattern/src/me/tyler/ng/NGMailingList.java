@@ -2,13 +2,13 @@ package me.tyler.ng;
 
 import java.util.Scanner;
 
-import me.tyler.ng.observer.Observable;
+import me.tyler.ng.observer.SimpleObservable;
 
 /**
  * 	Sends out new editions of the ever-so-popular 
  *  "National Geomorphic" Magazine to all subscribers!
  * */
-public class NGMailingList extends Observable<String>
+public class NGMailingList extends SimpleObservable<String>
 {
 	public enum State
 	{

@@ -1,61 +1,28 @@
 package me.tyler.ng.observer;
 
-import java.util.ArrayList;
-
 /**
- * Basic implementation of the IObservable interface.
+ * Generic interface for notifying a list of observers.
+ * 
+ * The type T specifies the type of argument observers should expect.
  * */
-public class Observable<T> implements IObservable<T>
+public interface Observable<T> 
 {
-	private ArrayList<IObserver<T>> observers = new ArrayList<IObserver<T>>();
+	/**
+	 * Adds observer to this Observable interface.
+	 * 
+	 * Throws an exception if the observer is already observing.
+	 * */
+	public void addObserver(Observer<T> observer) throws Exception;
 
-	@Override
-	public void addObserver(IObserver<T> observer) throws Exception
-	{
-		for(IObserver<T> o : observers)
-		{
-			//Check if observer is an exact or similar copy of an already registered observer.
-			if((o == observer) || o.getUID().equalsIgnoreCase(observer.getUID()))
-			{
-				//Normally, this would throw a class that inherits from Exception, but I'm keeping things "simple".
-				throw new Exception("Observer is already observing: " + observer);
-			}
-		}
-		
-		//No exception was thrown; this is a unique observer.
-		observers.add(observer);
-	}
-
-	@Override
-	public void removeObserver(IObserver<T> observer) throws Exception
-	{
-		boolean removed = false;
-		
-		for(IObserver<T> o : observers)
-		{
-			//Check if observer is an exact or similar copy of an already registered observer.
-			if((o == observer) || o.getUID().equalsIgnoreCase(observer.getUID()))
-			{
-				observers.remove(o);
-				removed = true;
-				
-				break;
-			}
-		}
-		
-		if(!removed)
-		{
-			throw new Exception("Observer is not currently observing: " + observer);
-		}
-	}
-
-	@Override
-	public void notifyObservers(T arg)
-	{
-		for(IObserver<T> observer : observers)
-		{
-			observer.update(this, arg);
-		}
-	}
-
+	/**
+	 * Removes observer from this Observable interface.
+	 * 
+	 * Throws an exception if the observer is not currently observing.
+	 * */
+	public void removeObserver(Observer<T> observer) throws Exception;
+	
+	/**
+	 * Sends an argument to all registered observers.
+	 * */
+	public void notifyObservers(T arg);
 }
