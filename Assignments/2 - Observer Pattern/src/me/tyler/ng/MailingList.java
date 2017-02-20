@@ -8,6 +8,10 @@ import me.tyler.ng.observer.Observable;
  * */
 public class MailingList extends Observable<String>
 {
+	public static void main(String[] args)
+	{
+		MailingList ng = new MailingList();
+	}
 	
 	public MailingList(){}
 

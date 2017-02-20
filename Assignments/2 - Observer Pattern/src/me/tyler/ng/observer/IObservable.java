@@ -1,7 +1,9 @@
 package me.tyler.ng.observer;
 
 /**
- * Interface for notifying a list of 
+ * Generic interface for notifying a list of observers.
+ * 
+ * The type T specifies the type of argument observers should expect.
  * */
 public interface IObservable<T> 
 {
@@ -19,5 +21,8 @@ public interface IObservable<T>
 	 * */
 	public void removeObserver(IObserver<T> observer) throws Exception;
 	
-	public void notifyObservers(IObservable<T> observable, T arg);
+	/**
+	 * Sends an argument to all registered observers.
+	 * */
+	public void notifyObservers(T arg);
 }
