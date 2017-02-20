@@ -15,7 +15,7 @@ public class Observable<T> implements IObservable<T>
 		for(IObserver<T> o : observers)
 		{
 			//Check if observer is an exact or similar copy of an already registered observer.
-			if((o == observer) || o.getUUID().equalsIgnoreCase(observer.getUUID()))
+			if((o == observer) || o.getUID().equalsIgnoreCase(observer.getUID()))
 			{
 				//Normally, this would throw a class that inherits from Exception, but I'm keeping things "simple".
 				throw new Exception("Observer is already observing: " + observer);
@@ -34,7 +34,7 @@ public class Observable<T> implements IObservable<T>
 		for(IObserver<T> o : observers)
 		{
 			//Check if observer is an exact or similar copy of an already registered observer.
-			if((o == observer) || o.getUUID().equalsIgnoreCase(observer.getUUID()))
+			if((o == observer) || o.getUID().equalsIgnoreCase(observer.getUID()))
 			{
 				observers.remove(o);
 				removed = true;

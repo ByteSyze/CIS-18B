@@ -4,7 +4,7 @@ import me.tyler.ng.observer.IObservable;
 import me.tyler.ng.observer.IObserver;
 
 /**
- * A patron of National Geomorphology Magazine.
+ * A patron of National Geomorphic Magazine.
  * */
 public class NGSubscriber implements IObserver<String>
 {
@@ -22,7 +22,7 @@ public class NGSubscriber implements IObserver<String>
 	}
 
 	@Override
-	public String getUUID() 
+	public String getUID() 
 	{
 		//Use the subscriber's street address as a unique way of identifying them.
 		return streetAddress;

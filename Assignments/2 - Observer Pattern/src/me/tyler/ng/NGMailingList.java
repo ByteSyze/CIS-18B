@@ -6,31 +6,36 @@ import me.tyler.ng.observer.Observable;
 
 /**
  * 	Sends out new editions of the ever-so-popular 
- *  "National Geomorphology" Magazine to all subscribers!
+ *  "National Geomorphic" Magazine to all subscribers!
  * */
-public class MailingList extends Observable<String>
+public class NGMailingList extends Observable<String>
 {
 	public enum State
 	{
-		SELECTING, ADDING, REMOVING, SENDING;
+		SELECTING, ADDING, REMOVING, SENDING, HELP;
 	}
 	
 	public static void main(String[] args)
 	{
-		MailingList ng = new MailingList();
+		NGMailingList ng = new NGMailingList();
 		
 		Scanner scanner = new Scanner(System.in); //Scan the system input stream.
-		State state = State.SELECTING; //Current state in the command UI.
+		State state = State.HELP; //Current state in the command UI. Start by listing commands.
 		String input; //User input.
 		
-		System.out.println("Welcome to the National Geomorphology Magazine mailing list!");
-		System.out.println("A) ADD NEW SUBSCRIBER");
-		System.out.println("B) REMOVE EXISTING SUBSCRIBER");
-		System.out.println("C) SEND MESSAGE TO ALL SUBSCRIBERS");
-		System.out.println("X) EXIT THE NATGEOM MAILING LIST");
+		System.out.println("Welcome to the National Geomorphic Magazine mailing list!");
 		
 		while(true)
 		{
+			if(state == State.HELP)
+			{
+				System.out.println("A) ADD NEW SUBSCRIBER");
+				System.out.println("B) REMOVE EXISTING SUBSCRIBER");
+				System.out.println("C) SEND MESSAGE TO ALL SUBSCRIBERS");
+				System.out.println("X) EXIT THE NATGEOM MAILING LIST");
+				
+				state = State.SELECTING;
+			}
 			if(state == State.SELECTING)
 			{
 				input = scanner.nextLine();
@@ -74,7 +79,7 @@ public class MailingList extends Observable<String>
 				} 
 				catch (Exception e) 
 				{
-					System.err.println("That address is already subscribed to National Geomorphology.");
+					System.err.println("That address is already subscribed to National Geomorphic.");
 					
 					state = State.SELECTING;
 				}
@@ -110,6 +115,6 @@ public class MailingList extends Observable<String>
 		}
 	}
 	
-	public MailingList(){}
+	public NGMailingList(){}
 
 }

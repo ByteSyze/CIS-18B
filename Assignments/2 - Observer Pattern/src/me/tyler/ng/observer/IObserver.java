@@ -15,5 +15,5 @@ public interface IObserver<T>
 	/**
 	 * Returns a unique identifier for this Observer.
 	 * */
-	public String getUUID();
+	public String getUID();
 }
