@@ -8,7 +8,7 @@ import me.tyler.ng.observer.SimpleObservable;
  * 	Sends out new editions of the ever-so-popular 
  *  "National Geomorphic" Magazine to all subscribers!
  * */
-public class NGMailingList extends SimpleObservable<String>
+public class Main
 {
 	public enum State
 	{
@@ -17,7 +17,7 @@ public class NGMailingList extends SimpleObservable<String>
 	
 	public static void main(String[] args)
 	{
-		NGMailingList ng = new NGMailingList();
+		SimpleObservable<String> ng = new SimpleObservable<String>(); //Stores and updates NGSubscriber objects created in the UI.
 		
 		Scanner scanner = new Scanner(System.in); //Scan the system input stream.
 		State state = State.HELP; //Current state in the command UI. Start by listing commands.
@@ -114,7 +114,4 @@ public class NGMailingList extends SimpleObservable<String>
 			}
 		}
 	}
-	
-	public NGMailingList(){}
-
 }
