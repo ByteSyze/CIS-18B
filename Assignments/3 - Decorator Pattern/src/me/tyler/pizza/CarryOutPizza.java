@@ -10,14 +10,6 @@ public class CarryOutPizza extends FoodItem
 	@Override
 	public float calculateCost()
 	{
-		return 0;
+		return surcharge;
 	}
-
-	@Override
-	public String generateReceipt()
-	{
-		return " -Carry-out \t(+$" + this.surcharge + ")";
-	}
-	
-
 }

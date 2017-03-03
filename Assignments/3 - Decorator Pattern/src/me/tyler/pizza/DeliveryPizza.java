@@ -13,10 +13,4 @@ public class DeliveryPizza extends FoodItem
 	{
 		return surcharge;
 	}
-	
-	//@Override
-	//public String generateItemizedList()
-	//{
-	//	return " -Delivery \t(+$" + this.surcharge + ")";
-	//}
 }
