@@ -6,25 +6,8 @@ import me.tyler.pizza.PizzaOption;
 
 public class SizeFactory extends FoodFactory
 {	
-	@Override
-	public FoodItem wrapFood(FoodItem food, String size) throws Exception
-	{
-		switch(size.toLowerCase())
-		{
-			case "sm":
-				return new Small(food);
-			case "md":
-				return new Medium(food);
-			case "lg":
-				return new Large(food);
-			case "xl":
-				return new ExtraLarge(food);
-			default:
-				throw new RuntimeException("Unknown Size: " + size);
-		}
-	} 
-	
-	class Small extends PizzaOption
+	@DynamicOption(allowDynamic=true)
+	protected class Small extends PizzaOption
 	{
 		public Small(FoodItem foodItem)
 		{
@@ -34,8 +17,9 @@ public class SizeFactory extends FoodFactory
 			description = "Small";
 		}
 	}
-	
-	class Medium extends PizzaOption
+
+	@DynamicOption(allowDynamic=true)
+	protected class Medium extends PizzaOption
 	{
 		public Medium(FoodItem foodItem)
 		{
@@ -45,8 +29,9 @@ public class SizeFactory extends FoodFactory
 			description = "Medium";
 		}
 	}
-	
-	class Large extends PizzaOption
+
+	@DynamicOption(allowDynamic=true)
+	protected class Large extends PizzaOption
 	{
 		public Large(FoodItem foodItem)
 		{
@@ -56,8 +41,9 @@ public class SizeFactory extends FoodFactory
 			description = "Large";
 		}
 	}
-	
-	class ExtraLarge extends PizzaOption
+
+	@DynamicOption(allowDynamic=true)
+	protected class ExtraLarge extends PizzaOption
 	{
 		public ExtraLarge(FoodItem foodItem)
 		{
@@ -67,5 +53,4 @@ public class SizeFactory extends FoodFactory
 			description = "Extra Large";
 		}
 	}
-
 }

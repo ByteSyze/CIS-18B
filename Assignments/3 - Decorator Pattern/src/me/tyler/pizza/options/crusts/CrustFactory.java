@@ -6,7 +6,7 @@ import me.tyler.pizza.PizzaOption;
 
 public class CrustFactory extends FoodFactory
 {
-	@Override
+	/*@Override
 	public FoodItem wrapFood(FoodItem food, String crust) throws Exception
 	{
 		switch(crust.toLowerCase())
@@ -20,9 +20,10 @@ public class CrustFactory extends FoodFactory
 			default:
 				throw new RuntimeException("Unknown Crust: " + crust);
 		}
-	}
-	
-	class ThinCrust extends PizzaOption
+	}*/
+
+	@DynamicOption(allowDynamic=true)
+	protected class ThinCrust extends PizzaOption
 	{
 		public ThinCrust(FoodItem foodItem) 
 		{
@@ -32,8 +33,9 @@ public class CrustFactory extends FoodFactory
 			description = "Thin Crst";
 		}
 	}
-	
-	class ThickCrust extends PizzaOption
+
+	@DynamicOption(allowDynamic=true)
+	protected class ThickCrust extends PizzaOption
 	{
 	 	public ThickCrust(FoodItem foodItem) 
 	 	{
@@ -43,8 +45,9 @@ public class CrustFactory extends FoodFactory
 	 		description = "Thick Crst";
 	 	}
 	}
-	
-	class StuffedCrust extends PizzaOption
+
+	@DynamicOption(allowDynamic=true)
+	protected class StuffedCrust extends PizzaOption
 	{
 		public StuffedCrust(FoodItem foodItem) 
 		{

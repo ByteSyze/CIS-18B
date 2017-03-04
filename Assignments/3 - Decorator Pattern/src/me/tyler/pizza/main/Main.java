@@ -6,7 +6,6 @@ import me.tyler.pizza.CarryOutPizza;
 import me.tyler.pizza.DeliveryPizza;
 import me.tyler.pizza.FoodFactory;
 import me.tyler.pizza.FoodItem;
-import me.tyler.pizza.FoodFactory.DynamicOption;
 import me.tyler.pizza.options.condiments.*;
 import me.tyler.pizza.options.sizes.*;
 import me.tyler.pizza.options.crusts.*;
@@ -56,7 +55,7 @@ public class Main
 					d = new CarryOutPizza();
 				else
 				{
-					System.out.println("Invalid option. Please select 'A' or 'B'");
+					System.out.println("Invalid option.");
 					state = State.SELECT_DELIVERY;
 				}
 			}
@@ -65,24 +64,17 @@ public class Main
 				state = State.SELECT_CRUST;
 				
 				System.out.println("Please select a pizza size: ");
-				System.out.println("a. Small");
-				System.out.println("b. Medium");
-				System.out.println("c. Large");
-				System.out.println("d. Extra Large");
 				
-				userSelection = getNextSelection();
+				FoodFactory.printDynamicFoodItems(SizeFactory.class);
 				
-				if(userSelection == 'a')
-					d = defaultSizeFactory.wrapFood(d, "sm");
-				else if(userSelection == 'b')
-					d = defaultSizeFactory.wrapFood(d, "md");
-				else if(userSelection == 'c')
-					d = defaultSizeFactory.wrapFood(d, "lg");
-				else if(userSelection == 'd')
-					d = defaultSizeFactory.wrapFood(d, "xl");
-				else
+				try
 				{
-					System.out.println("Invalid option. Please select 'A', 'B', 'C' or 'D'");
+					userSelection = getNextSelection();
+					d = processUserSelection(userSelection, defaultSizeFactory, d);
+				}
+				catch(Exception e)
+				{
+					System.out.println("Invalid Option.");
 					state = State.SELECT_SIZE;
 				}
 			}
@@ -91,59 +83,43 @@ public class Main
 				state = State.SELECT_CONDIMENTS;
 				
 				System.out.println("Please select a pizza crust: ");
-				System.out.println("a. Thin Crust");
-				System.out.println("b. Thick Crust");
-				System.out.println("c. Stuffed Crust");
 				
-				userSelection = getNextSelection();
-				
-				if(userSelection == 'a')
-					defaultCrustFactory.wrapFood(d, "thin");
-				else if(userSelection == 'b')
-					defaultCrustFactory.wrapFood(d, "thick");
-				else if(userSelection == 'c')
-					defaultCrustFactory.wrapFood(d, "stuffed");
-				else
+				FoodFactory.printDynamicFoodItems(CrustFactory.class);
+
+				try
 				{
-					System.out.println("Invalid option. Please select 'A', 'B' or 'C'");
+					userSelection = getNextSelection();
+					d = processUserSelection(userSelection, defaultCrustFactory, d);
+				}
+				catch(Exception e)
+				{
+					System.out.println("Invalid Option.");
 					state = State.SELECT_CRUST;
 				}
 			}
 			else if(state == State.SELECT_CONDIMENTS)
 			{	
 				System.out.println("Please select your pizza condiments ('X' to finish): ");
-				char startOption = 'a';
-				int optionIndex = 0;
-				int classIndex = 0;
 				
-				for(Class<?> option : CondimentFactory.class.getDeclaredClasses())
-				{
-					if(option.isAnnotationPresent(DynamicOption.class))
-					{
-						if(option.getAnnotation(DynamicOption.class).allowDynamic())
-						{
-							System.out.println((char)(startOption + optionIndex) + ". " + option.getSimpleName());
-							optionIndex++;
-						}
-					}
-				}
+				FoodFactory.printDynamicFoodItems(CondimentFactory.class);
 				
 				userSelection = getNextSelection();
-				
-				classIndex = userSelection - startOption;
 				
 				if(userSelection == 'x')
 				{
 					state = State.PRINT_RECEIPT;
 				}
-				else if(classIndex < CondimentFactory.class.getDeclaredClasses().length)
-				{
-					String option = defaultCondimentFactory.getClass().getDeclaredClasses()[classIndex].getSimpleName();
-					d = defaultCondimentFactory.wrapFood(d, option);
-				}
 				else
 				{
-					System.out.println("Invalid option.");
+					try
+					{
+						d = processUserSelection(userSelection, defaultCondimentFactory, d);
+					}
+					catch(Exception e)
+					{
+						System.out.println("Invalid Option.");
+						state = State.SELECT_CONDIMENTS;
+					}
 				}
 			}
 			else if(state == State.PRINT_RECEIPT)
@@ -154,18 +130,31 @@ public class Main
 				
 				break;
 			}
-			//d = defaultSizeFactory.wrapFood(d, "lg");
-			//d = defaultCrustFactory.wrapFood(d, "stuffed");
-			//d = defaultCondimentFactory.wrapFood(d, "pepperoni");
 		}
 		
 		INPUT_SCANNER.close();
 	}
 	
-	/**Loosely interprets and returns the next user input.*/
+	/** Returns the next character from user input in lower case. This method will block until a character is available.*/
 	private static char getNextSelection()
 	{
-		return Character.toLowerCase(INPUT_SCANNER.nextLine().charAt(0));
+		while(!INPUT_SCANNER.hasNext());
+		
+		return Character.toLowerCase(INPUT_SCANNER.next().charAt(0));
 	}
-
+	
+	public static FoodItem processUserSelection(char userSelection, FoodFactory factory, FoodItem currentFood) throws Exception
+	{
+		char startOption = 'a';
+		int classIndex = userSelection - startOption; //The index of the chosen option class inside a specified factory.
+		
+		if(classIndex >= 0 && classIndex < factory.getClass().getDeclaredClasses().length)
+		{
+			return factory.wrapFood(currentFood, FoodFactory.getDynamicFoodClassName(factory.getClass(), classIndex));
+		}
+		else
+		{
+			throw new RuntimeException("Invalid Option.");
+		}
+	}
 }
