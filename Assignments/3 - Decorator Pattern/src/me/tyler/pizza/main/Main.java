@@ -6,6 +6,7 @@ import me.tyler.pizza.CarryOutPizza;
 import me.tyler.pizza.DeliveryPizza;
 import me.tyler.pizza.FoodFactory;
 import me.tyler.pizza.FoodItem;
+import me.tyler.pizza.FoodFactory.DynamicOption;
 import me.tyler.pizza.options.condiments.*;
 import me.tyler.pizza.options.sizes.*;
 import me.tyler.pizza.options.crusts.*;
@@ -109,17 +110,53 @@ public class Main
 				}
 			}
 			else if(state == State.SELECT_CONDIMENTS)
-			{
-				//TODO
+			{	
+				System.out.println("Please select your pizza condiments ('X' to finish): ");
+				char startOption = 'a';
+				int optionIndex = 0;
+				int classIndex = 0;
+				
+				for(Class<?> option : CondimentFactory.class.getDeclaredClasses())
+				{
+					if(option.isAnnotationPresent(DynamicOption.class))
+					{
+						if(option.getAnnotation(DynamicOption.class).allowDynamic())
+						{
+							System.out.println((char)(startOption + optionIndex) + ". " + option.getSimpleName());
+							optionIndex++;
+						}
+					}
+				}
+				
+				userSelection = getNextSelection();
+				
+				classIndex = userSelection - startOption;
+				
+				if(userSelection == 'x')
+				{
+					state = State.PRINT_RECEIPT;
+				}
+				else if(classIndex < CondimentFactory.class.getDeclaredClasses().length)
+				{
+					String option = defaultCondimentFactory.getClass().getDeclaredClasses()[classIndex].getSimpleName();
+					d = defaultCondimentFactory.wrapFood(d, option);
+				}
+				else
+				{
+					System.out.println("Invalid option.");
+				}
 			}
-			
-			d = defaultSizeFactory.wrapFood(d, "lg");
-			d = defaultCrustFactory.wrapFood(d, "stuffed");
-			d = defaultCondimentFactory.wrapFood(d, "pepperoni");
-			
-			System.out.println(d.generateReceipt());
-			System.out.println("------------------");
-			System.out.println("Order Total: $" + d.calculateCost());
+			else if(state == State.PRINT_RECEIPT)
+			{
+				System.out.println(d.generateReceipt());
+				System.out.println("------------------");
+				System.out.println("Order Total: $" + d.calculateCost());
+				
+				break;
+			}
+			//d = defaultSizeFactory.wrapFood(d, "lg");
+			//d = defaultCrustFactory.wrapFood(d, "stuffed");
+			//d = defaultCondimentFactory.wrapFood(d, "pepperoni");
 		}
 		
 		INPUT_SCANNER.close();

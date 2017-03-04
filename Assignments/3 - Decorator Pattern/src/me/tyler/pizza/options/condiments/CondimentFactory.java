@@ -1,5 +1,7 @@
 package me.tyler.pizza.options.condiments;
 
+import java.lang.reflect.Constructor;
+
 import me.tyler.pizza.FoodFactory;
 import me.tyler.pizza.FoodItem;
 import me.tyler.pizza.PizzaOption;
@@ -9,36 +11,20 @@ public class CondimentFactory extends FoodFactory
 	@Override
 	public FoodItem wrapFood(FoodItem food, String condiment) throws Exception 
 	{
-		switch(condiment.toLowerCase())
+		Class<?> condimentClass = Class.forName(fullyQualifiedName + "$" + condiment);
+		if(condimentClass.isAnnotationPresent(DynamicOption.class))
 		{
-			case "alfredo":
-				return new Alfredo(food);
-			case "cheese":
-				return new Cheese(food);
-			case "chicken":
-				return new Chicken(food);
-			case "olives":
-				return new Olives(food);
-			case "pepperoni":
-				return new Pepperoni(food);
-			case "sausage":
-				return new Sausage(food);
-			default:
-				throw new RuntimeException("Unknown condiment: " + condiment);
+			if(condimentClass.getDeclaredAnnotation(DynamicOption.class).allowDynamic())
+			{
+				Constructor<?> condimentConstructor = condimentClass.getConstructors()[0];
+				return (FoodItem)condimentConstructor.newInstance(this, food);
+			}
 		}
+		
+		return null;
 	}
 	
-	class Alfredo extends PizzaOption 
-	{
-		public Alfredo(FoodItem foodItem)
-		{
-			super(foodItem);
-			
-			surcharge = 1f;
-			description = "Alfredo";
-		}
-	}
-
+	@DynamicOption(allowDynamic=true)
 	class Cheese extends PizzaOption
 	{
 		public Cheese(FoodItem foodItem)
@@ -50,6 +36,7 @@ public class CondimentFactory extends FoodFactory
 		}
 	}
 	
+	@DynamicOption(allowDynamic=true)
 	class Chicken extends PizzaOption
 	{
 		public Chicken(FoodItem foodItem)
@@ -60,7 +47,8 @@ public class CondimentFactory extends FoodFactory
 			description = "Chicken";
 		}
 	}
-
+	
+	@DynamicOption(allowDynamic=true)
 	class Olives extends PizzaOption
 	{
 		public Olives(FoodItem foodItem) 
@@ -72,6 +60,7 @@ public class CondimentFactory extends FoodFactory
 		}
 	}
 	
+	@DynamicOption(allowDynamic=true)
 	class Pepperoni extends PizzaOption
 	{
 		public Pepperoni(FoodItem foodItem) 
@@ -83,6 +72,19 @@ public class CondimentFactory extends FoodFactory
 		}
 	}
 	
+	@DynamicOption(allowDynamic=true)
+	class Peppers extends PizzaOption
+	{
+		public Peppers(FoodItem foodItem) 
+		{
+			super(foodItem);
+			
+			surcharge = .2f;
+			description = "Pepperoni";
+		}
+	}
+	
+	@DynamicOption(allowDynamic=true)
 	class Sausage extends PizzaOption 
 	{
 		public Sausage(FoodItem foodItem)
