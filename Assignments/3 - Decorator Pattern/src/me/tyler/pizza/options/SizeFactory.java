@@ -2,7 +2,6 @@ package me.tyler.pizza.options;
 
 import me.tyler.pizza.FoodItem;
 import me.tyler.pizza.FoodFactory;
-import me.tyler.pizza.PizzaOption;
 
 public class SizeFactory extends FoodFactory
 {	

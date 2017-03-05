@@ -11,11 +11,12 @@ public class Main
 	/**Possible states in the command interface.*/
 	public enum State
 	{
+		PRINT_CONDIMENTS,
+		PRINT_RECEIPT,
 		SELECT_DELIVERY,
-		SELECT_SIZE,
-		SELECT_CRUST,
 		SELECT_CONDIMENTS,
-		PRINT_RECEIPT
+		SELECT_CRUST,
+		SELECT_SIZE
 	}
 	
 	public static FoodFactory defaultServiceFactory = new ServiceFactory();
@@ -76,7 +77,7 @@ public class Main
 			}
 			else if(state == State.SELECT_CRUST)
 			{
-				state = State.SELECT_CONDIMENTS;
+				state = State.PRINT_CONDIMENTS;
 				
 				System.out.println("Please select a pizza crust: ");
 				
@@ -93,12 +94,15 @@ public class Main
 					state = State.SELECT_CRUST;
 				}
 			}
-			else if(state == State.SELECT_CONDIMENTS)
-			{	
+			else if(state == State.PRINT_CONDIMENTS)
+			{
+				state = State.SELECT_CONDIMENTS;
 				System.out.println("Please select your pizza condiments ('X' to finish): ");
 				
 				FoodFactory.printDynamicFoodItems(CondimentFactory.class);
-				
+			}
+			else if(state == State.SELECT_CONDIMENTS)
+			{	
 				userSelection = getNextSelection();
 				
 				if(userSelection == 'x')
@@ -127,11 +131,12 @@ public class Main
 				break;
 			}
 		}
-		
 		INPUT_SCANNER.close();
 	}
 	
-	/** Returns the next character from user input in lower case. This method will block until a character is available.*/
+	/**
+	 * Returns the next character from user input in lower case. This method will block until a character is available.
+	 * */
 	private static char getNextSelection()
 	{
 		while(!INPUT_SCANNER.hasNext());

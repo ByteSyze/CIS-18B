@@ -1,4 +1,6 @@
-package me.tyler.pizza;
+package me.tyler.pizza.options;
+
+import me.tyler.pizza.FoodItem;
 
 public abstract class PizzaOption extends FoodItem
 {
