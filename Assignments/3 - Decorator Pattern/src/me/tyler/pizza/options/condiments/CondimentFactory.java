@@ -62,7 +62,7 @@ public class CondimentFactory extends FoodFactory
 			super(foodItem);
 			
 			surcharge = .2f;
-			description = "Pepperoni";
+			description = "Peppers";
 		}
 	}
 	

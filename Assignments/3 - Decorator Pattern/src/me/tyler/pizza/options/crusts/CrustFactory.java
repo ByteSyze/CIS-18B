@@ -6,22 +6,6 @@ import me.tyler.pizza.PizzaOption;
 
 public class CrustFactory extends FoodFactory
 {
-	/*@Override
-	public FoodItem wrapFood(FoodItem food, String crust) throws Exception
-	{
-		switch(crust.toLowerCase())
-		{
-			case "thin":
-				return new ThinCrust(food);
-			case "thick":
-				return new ThickCrust(food);
-			case "stuffed":
-				return new StuffedCrust(food);
-			default:
-				throw new RuntimeException("Unknown Crust: " + crust);
-		}
-	}*/
-
 	@DynamicOption(allowDynamic=true)
 	protected class ThinCrust extends PizzaOption
 	{
@@ -49,9 +33,14 @@ public class CrustFactory extends FoodFactory
 	@DynamicOption(allowDynamic=true)
 	protected class StuffedCrust extends PizzaOption
 	{
-		public StuffedCrust(FoodItem foodItem) 
+		public StuffedCrust(FoodItem foodItem) throws Exception 
 		{
 			super(foodItem);
+			
+			//Kludgey workaround for restricting stuffed crust on small pizzas.
+			//Only works because our interface asks for size immediately before asking for crust options.
+			if(foodItem.getDescription() == "Small")
+				throw new Exception("Stuffed crust is not allowed on small pizzas.");
 			
 			surcharge = 4f;
 			description = "Stuffed Crst";

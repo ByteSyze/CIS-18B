@@ -70,7 +70,7 @@ public class Main
 				try
 				{
 					userSelection = getNextSelection();
-					d = processUserSelection(userSelection, defaultSizeFactory, d);
+					d = processUserSelection(userSelection, d, defaultSizeFactory);
 				}
 				catch(Exception e)
 				{
@@ -89,7 +89,7 @@ public class Main
 				try
 				{
 					userSelection = getNextSelection();
-					d = processUserSelection(userSelection, defaultCrustFactory, d);
+					d = processUserSelection(userSelection, d, defaultCrustFactory);
 				}
 				catch(Exception e)
 				{
@@ -113,7 +113,7 @@ public class Main
 				{
 					try
 					{
-						d = processUserSelection(userSelection, defaultCondimentFactory, d);
+						d = processUserSelection(userSelection, d, defaultCondimentFactory);
 					}
 					catch(Exception e)
 					{
@@ -143,10 +143,21 @@ public class Main
 		return Character.toLowerCase(INPUT_SCANNER.next().charAt(0));
 	}
 	
-	public static FoodItem processUserSelection(char userSelection, FoodFactory factory, FoodItem currentFood) throws Exception
+	/**
+	 * Wraps the specified FoodItem in another FoodItem that is retrieved from the specified factory.
+	 * 
+	 * @param	userSelection	a single character selection  corresponding to the options printed by {@link FoodFactory#printDynamicFoodItems()}.
+	 * @param	currentFood		the current food to wrap
+	 * @param	factory			the FoodFactory to retrieve the dynamic FoodItem from
+	 * 
+	 * @return	the new FoodItem enveloping currentFood
+	 * 
+	 * @throws	Exception	if the index from userSelection is not in the range [0, factory.getClass().getDeclaredClasses().length)
+	 * */
+	public static FoodItem processUserSelection(char userSelection, FoodItem currentFood, FoodFactory factory) throws Exception
 	{
 		char startOption = 'a';
-		int classIndex = userSelection - startOption; //The index of the chosen option class inside a specified factory.
+		int classIndex = userSelection - startOption; //The index of the user-chosen option relative to the start option.
 		
 		if(classIndex >= 0 && classIndex < factory.getClass().getDeclaredClasses().length)
 		{
