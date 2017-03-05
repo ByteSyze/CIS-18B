@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 
 /**
- * A special factory for allowing dynamic retrieval of nested classes via Reflection.
+ * A special factory for allowing dynamic retrieval of nested classes.
  * */
 public abstract class FoodFactory
 {
@@ -24,7 +24,7 @@ public abstract class FoodFactory
 	 * @param	food	the FoodItem to wrap
 	 * @param	type	the exact [simple] name of a nested FoodItem class in this FoodFactory
 	 * 
-	 * @return	the new FoodItem of the specified type, wrapping food
+	 * @return	the new FoodItem of the specified type, wrapping {@code food}
 	 * */
 	public FoodItem wrapFood(FoodItem food, String type) throws Exception 
 	{
@@ -55,7 +55,7 @@ public abstract class FoodFactory
 			{
 				if(option.getAnnotation(NestedType.class).allowDynamic())
 				{
-					System.out.println((char)(startOption + optionIndex) + ". " + option.getSimpleName());
+					System.out.println((char)(startOption + optionIndex) + "." + option.getSimpleName().replaceAll("([A-Z](?=[a-z]))", " $1"));
 					optionIndex++;
 				}
 			}
@@ -66,7 +66,7 @@ public abstract class FoodFactory
 	/**
 	 * Returns the simple name of the nth nested class of the specified FoodFactory child class.
 	 * 
-	 * @throws ArrayIndexOutOfBoundsException If index is outside the range [0, factory.getDeclaredClasses().length)
+	 * @throws ArrayIndexOutOfBoundsException If {@code index} is outside the range {@code [0, factory.getDeclaredClasses().length)}
 	 * */
 	public static String getDynamicFoodClassName(Class<? extends FoodFactory> factory, int index) throws ArrayIndexOutOfBoundsException
 	{

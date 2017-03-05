@@ -2,13 +2,9 @@ package me.tyler.pizza.main;
 
 import java.util.Scanner;
 
-import me.tyler.pizza.CarryOutPizza;
-import me.tyler.pizza.DeliveryPizza;
 import me.tyler.pizza.FoodFactory;
 import me.tyler.pizza.FoodItem;
-import me.tyler.pizza.options.condiments.*;
-import me.tyler.pizza.options.sizes.*;
-import me.tyler.pizza.options.crusts.*;
+import me.tyler.pizza.options.*;
 
 public class Main 
 {	
@@ -22,6 +18,7 @@ public class Main
 		PRINT_RECEIPT
 	}
 	
+	public static FoodFactory defaultServiceFactory = new ServiceFactory();
 	public static FoodFactory defaultSizeFactory = new SizeFactory();
 	public static FoodFactory defaultCrustFactory = new CrustFactory();
 	public static FoodFactory defaultCondimentFactory = new CondimentFactory();
@@ -44,16 +41,15 @@ public class Main
 				state = State.SELECT_SIZE;
 				
 				System.out.println("Please select a delivery option: ");
-				System.out.println("a. Delivery");
-				System.out.println("b. Carry-out");
 				
-				userSelection = getNextSelection();
+				FoodFactory.printDynamicFoodItems(ServiceFactory.class);
 				
-				if(userSelection == 'a')
-					d = new DeliveryPizza();
-				else if(userSelection == 'b')
-					d = new CarryOutPizza();
-				else
+				try
+				{
+					userSelection = getNextSelection();
+					d = processUserSelection(userSelection, d, defaultServiceFactory);
+				}
+				catch(Exception e)
 				{
 					System.out.println("Invalid option.");
 					state = State.SELECT_DELIVERY;

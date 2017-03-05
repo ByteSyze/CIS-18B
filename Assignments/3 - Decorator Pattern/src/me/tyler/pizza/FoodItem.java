@@ -8,13 +8,16 @@ public abstract class FoodItem
 	protected String description = "Undefined Food Item";
 	protected float  surcharge;
 	
+	/**
+	 * @return the description of this food item.
+	 * */
 	public String getDescription()
 	{
 		return this.description;
 	}
 	
 	/**
-	 * Generates and returns a receipt for this FoodItem.
+	 * @return a newly generated receipt for this FoodItem.
 	 * */
 	public String generateReceipt()
 	{
@@ -22,7 +25,7 @@ public abstract class FoodItem
 	}
 	
 	/**
-	 * Calculates the total price of this FoodItem.
+	 * @return the total price of this FoodItem.
 	 * */
 	public abstract float calculateCost();
 

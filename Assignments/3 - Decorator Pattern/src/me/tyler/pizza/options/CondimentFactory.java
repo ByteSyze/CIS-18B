@@ -1,4 +1,4 @@
-package me.tyler.pizza.options.condiments;
+package me.tyler.pizza.options;
 
 import me.tyler.pizza.FoodFactory;
 import me.tyler.pizza.FoodItem;

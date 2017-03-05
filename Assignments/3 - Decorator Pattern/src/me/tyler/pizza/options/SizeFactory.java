@@ -1,4 +1,4 @@
-package me.tyler.pizza.options.sizes;
+package me.tyler.pizza.options;
 
 import me.tyler.pizza.FoodItem;
 import me.tyler.pizza.FoodFactory;
