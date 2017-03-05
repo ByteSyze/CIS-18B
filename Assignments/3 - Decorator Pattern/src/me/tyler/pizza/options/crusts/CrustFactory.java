@@ -6,7 +6,7 @@ import me.tyler.pizza.PizzaOption;
 
 public class CrustFactory extends FoodFactory
 {
-	@DynamicOption(allowDynamic=true)
+	@NestedType(allowDynamic=true)
 	protected class ThinCrust extends PizzaOption
 	{
 		public ThinCrust(FoodItem foodItem) 
@@ -18,7 +18,7 @@ public class CrustFactory extends FoodFactory
 		}
 	}
 
-	@DynamicOption(allowDynamic=true)
+	@NestedType(allowDynamic=true)
 	protected class ThickCrust extends PizzaOption
 	{
 	 	public ThickCrust(FoodItem foodItem) 
@@ -30,7 +30,7 @@ public class CrustFactory extends FoodFactory
 	 	}
 	}
 
-	@DynamicOption(allowDynamic=true)
+	@NestedType(allowDynamic=true)
 	protected class StuffedCrust extends PizzaOption
 	{
 		public StuffedCrust(FoodItem foodItem) throws Exception 

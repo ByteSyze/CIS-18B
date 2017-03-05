@@ -29,9 +29,9 @@ public abstract class FoodFactory
 	public FoodItem wrapFood(FoodItem food, String type) throws Exception 
 	{
 		Class<?> condimentClass = Class.forName(fullyQualifiedName + "$" + type);
-		if(condimentClass.isAnnotationPresent(DynamicOption.class))
+		if(condimentClass.isAnnotationPresent(NestedType.class))
 		{
-			if(condimentClass.getDeclaredAnnotation(DynamicOption.class).allowDynamic())
+			if(condimentClass.getDeclaredAnnotation(NestedType.class).allowDynamic())
 			{
 				Constructor<?> condimentConstructor = condimentClass.getConstructors()[0];
 				return (FoodItem)condimentConstructor.newInstance(this, food);
@@ -51,9 +51,9 @@ public abstract class FoodFactory
 		
 		for(Class<?> option : factory.getDeclaredClasses())
 		{
-			if(option.isAnnotationPresent(DynamicOption.class))
+			if(option.isAnnotationPresent(NestedType.class))
 			{
-				if(option.getAnnotation(DynamicOption.class).allowDynamic())
+				if(option.getAnnotation(NestedType.class).allowDynamic())
 				{
 					System.out.println((char)(startOption + optionIndex) + ". " + option.getSimpleName());
 					optionIndex++;
@@ -77,11 +77,11 @@ public abstract class FoodFactory
 	}
 
 	/**
-	 * Signifies a class that can allow/restrict itself from being loaded dynamically in a FoodFactory.
+	 * Signifies a nested class that can allow/restrict itself from being loaded dynamically in a FoodFactory.
 	 * */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
-	public @interface DynamicOption
+	public @interface NestedType
 	{
 		boolean allowDynamic() default false;
 	}

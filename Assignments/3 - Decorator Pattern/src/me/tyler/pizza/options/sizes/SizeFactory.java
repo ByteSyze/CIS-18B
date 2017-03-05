@@ -6,7 +6,7 @@ import me.tyler.pizza.PizzaOption;
 
 public class SizeFactory extends FoodFactory
 {	
-	@DynamicOption(allowDynamic=true)
+	@NestedType(allowDynamic=true)
 	protected class Small extends PizzaOption
 	{
 		public Small(FoodItem foodItem)
@@ -18,7 +18,7 @@ public class SizeFactory extends FoodFactory
 		}
 	}
 
-	@DynamicOption(allowDynamic=true)
+	@NestedType(allowDynamic=true)
 	protected class Medium extends PizzaOption
 	{
 		public Medium(FoodItem foodItem)
@@ -30,7 +30,7 @@ public class SizeFactory extends FoodFactory
 		}
 	}
 
-	@DynamicOption(allowDynamic=true)
+	@NestedType(allowDynamic=true)
 	protected class Large extends PizzaOption
 	{
 		public Large(FoodItem foodItem)
@@ -42,7 +42,7 @@ public class SizeFactory extends FoodFactory
 		}
 	}
 
-	@DynamicOption(allowDynamic=true)
+	@NestedType(allowDynamic=true)
 	protected class ExtraLarge extends PizzaOption
 	{
 		public ExtraLarge(FoodItem foodItem)
