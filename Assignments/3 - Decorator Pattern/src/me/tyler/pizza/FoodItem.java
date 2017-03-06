@@ -6,7 +6,7 @@ package me.tyler.pizza;
 public abstract class FoodItem 
 {
 	protected String description = "Undefined Food Item";
-	protected float  surcharge;
+	protected float  surcharge   = 0f;
 	
 	/**
 	 * @return the description of this food item.

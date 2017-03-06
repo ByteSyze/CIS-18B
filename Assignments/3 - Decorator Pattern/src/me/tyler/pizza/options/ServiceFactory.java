@@ -1,56 +1,33 @@
 package me.tyler.pizza.options;
 
-import java.lang.reflect.Constructor;
-
 import me.tyler.pizza.FoodFactory;
 import me.tyler.pizza.FoodItem;
 
+/**
+ * Contains concrete classes that directly inherit from FoodItem. All other factories can be used to decorate these classes.
+ * */
 public class ServiceFactory extends FoodFactory
 {
-	@Override
-	public FoodItem wrapFood(FoodItem food, String type) throws Exception 
-	{
-		Class<?> condimentClass = Class.forName(fullyQualifiedName + "$" + type);
-		if(condimentClass.isAnnotationPresent(NestedType.class))
-		{
-			if(condimentClass.getDeclaredAnnotation(NestedType.class).allowDynamic())
-			{
-				Constructor<?> condimentConstructor = condimentClass.getConstructors()[0];
-				return (FoodItem)condimentConstructor.newInstance(this);
-			}
-		}
-		
-		return null;
-	}
-	
 	@NestedType(allowDynamic=true)
-	public class CarryOutPizza extends FoodItem
+	public class CarryOut extends PizzaOption
 	{
-		public CarryOutPizza()
+		public CarryOut(FoodItem food)
 		{
-			this.description = "Carry-Out Pizza";
-		}
-
-		@Override
-		public float calculateCost()
-		{
-			return surcharge;
+			super(food);
+			
+			this.description = "Carry-Out";
 		}
 	}
 	
 	@NestedType(allowDynamic=true)
-	public class DeliveryPizza extends FoodItem
+	public class Delivery extends PizzaOption
 	{
-		public DeliveryPizza()
+		public Delivery(FoodItem food)
 		{
-			this.description = "Delivery Pizza";
+			super(food);
+			
+			this.description = "Delivery";
 			this.surcharge = 5f;
-		}
-
-		@Override
-		public float calculateCost()
-		{
-			return surcharge;
 		}
 	}
 }

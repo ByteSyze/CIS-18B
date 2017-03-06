@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import me.tyler.pizza.FoodFactory;
 import me.tyler.pizza.FoodItem;
+import me.tyler.pizza.Pizza;
 import me.tyler.pizza.options.*;
 
 public class Main 
@@ -31,7 +32,7 @@ public class Main
 		State state = State.SELECT_DELIVERY;
 		
 		char userSelection;
-		FoodItem d = null;
+		FoodItem pizza = new Pizza();
 		
 		System.out.println("Welcome to the only Pizzeria in the world where you can order from a command UX. The future is now~\n");
 		
@@ -48,7 +49,7 @@ public class Main
 				try
 				{
 					userSelection = getNextSelection();
-					d = processUserSelection(userSelection, d, defaultServiceFactory);
+					pizza = processUserSelection(userSelection, pizza, defaultServiceFactory);
 				}
 				catch(Exception e)
 				{
@@ -67,7 +68,7 @@ public class Main
 				try
 				{
 					userSelection = getNextSelection();
-					d = processUserSelection(userSelection, d, defaultSizeFactory);
+					pizza = processUserSelection(userSelection, pizza, defaultSizeFactory);
 				}
 				catch(Exception e)
 				{
@@ -86,7 +87,7 @@ public class Main
 				try
 				{
 					userSelection = getNextSelection();
-					d = processUserSelection(userSelection, d, defaultCrustFactory);
+					pizza = processUserSelection(userSelection, pizza, defaultCrustFactory);
 				}
 				catch(Exception e)
 				{
@@ -113,7 +114,7 @@ public class Main
 				{
 					try
 					{
-						d = processUserSelection(userSelection, d, defaultCondimentFactory);
+						pizza = processUserSelection(userSelection, pizza, defaultCondimentFactory);
 					}
 					catch(Exception e)
 					{
@@ -124,9 +125,9 @@ public class Main
 			}
 			else if(state == State.PRINT_RECEIPT)
 			{
-				System.out.println(d.generateReceipt());
+				System.out.println(pizza.generateReceipt());
 				System.out.println("------------------");
-				System.out.println("Order Total: $" + d.calculateCost());
+				System.out.println("Order Total: $" + pizza.calculateCost());
 				
 				break;
 			}
@@ -162,7 +163,7 @@ public class Main
 		
 		if(classIndex >= 0 && classIndex < factory.getClass().getDeclaredClasses().length)
 		{
-			return factory.wrapFood(currentFood, FoodFactory.getDynamicFoodClassName(factory.getClass(), classIndex));
+			return factory.createFoodItem(currentFood, FoodFactory.getDynamicFoodClassName(factory.getClass(), classIndex));
 		}
 		else
 		{

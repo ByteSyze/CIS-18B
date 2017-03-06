@@ -76,4 +76,16 @@ public class CondimentFactory extends FoodFactory
 			description = "Sausage";
 		}
 	}
+	
+	@NestedType(allowDynamic=true)
+	protected class Onions extends PizzaOption 
+	{
+		public Onions(FoodItem foodItem)
+		{
+			super(foodItem);
+			
+			surcharge = .5f;
+			description = "Onions";
+		}
+	}
 }

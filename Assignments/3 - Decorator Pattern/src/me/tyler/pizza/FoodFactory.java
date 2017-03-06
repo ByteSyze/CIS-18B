@@ -19,21 +19,25 @@ public abstract class FoodFactory
 	}
 
 	/**
-	 * Wraps the specified FoodItem in another FoodItem class declared within this FoodFactory.
+	 * Creates and returns a new FoodItem of {@code type}, or, in the case of decorator factories,
+	 * takes the specified FoodItem and "wraps" it in a new FoodItem of {@code type}.
 	 * 
-	 * @param	food	the FoodItem to wrap
+	 * @param	food	the FoodItem to wrap (null if factory creates an independent FoodItem)
 	 * @param	type	the exact [simple] name of a nested FoodItem class in this FoodFactory
 	 * 
 	 * @return	the new FoodItem of the specified type, wrapping {@code food}
 	 * */
-	public FoodItem wrapFood(FoodItem food, String type) throws Exception 
+	public FoodItem createFoodItem(FoodItem food, String type) throws Exception 
 	{
 		Class<?> condimentClass = Class.forName(fullyQualifiedName + "$" + type);
+		
 		if(condimentClass.isAnnotationPresent(NestedType.class))
 		{
 			if(condimentClass.getDeclaredAnnotation(NestedType.class).allowDynamic())
 			{
 				Constructor<?> condimentConstructor = condimentClass.getConstructors()[0];
+				
+				//Instantiate the new decorator from the current factory, passing in the specified food to its constructor.
 				return (FoodItem)condimentConstructor.newInstance(this, food);
 			}
 		}
@@ -42,7 +46,7 @@ public abstract class FoodFactory
 	}
 	
 	/**
-	 * Prints all nested FoodItem classes with @DynamicOption(allowDynamic=true) from the specified FoodFactory class in an itemized fashion.
+	 * Prints all nested FoodItem classes with @NestedType(allowDynamic=true) from the specified FoodFactory class in an itemized fashion.
 	 * */
 	public static FoodItem printDynamicFoodItems(Class<? extends FoodFactory> factory)
 	{
