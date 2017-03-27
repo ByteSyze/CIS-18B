@@ -38,17 +38,17 @@ public class ReversibleCommandQueue
 			
 			nextCommand.execute();
 			
-			executedCommands.addFirst(nextCommand);
+			executedCommands.addLast(nextCommand);
 		}
 	}
 	
 	/**
-	 * Reverses the command at the tail of the executed deque.
+	 * Reverses the command at the tail of the executed command deque.
 	 * */
 	public void undoLastCommand()
 	{
 		if(!executedCommands.isEmpty())
-			executedCommands.removeFirst().undo();
+			executedCommands.removeLast().undo();
 	}
 	
 	/**

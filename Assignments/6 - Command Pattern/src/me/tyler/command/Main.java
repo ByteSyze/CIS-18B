@@ -7,11 +7,14 @@ public class Main
 	public static void main(String[] args)
 	{
 		Scanner scanner = new Scanner(System.in);
+		
 		ReversibleCommandQueue commandQueue = new ReversibleCommandQueue();
+		
 		CartesianPlayer player = new CartesianPlayer();
 		
 		boolean gameRunning = true;
-		String userInput;
+		
+		char userInput;
 		
 		System.out.println(player);
 		
@@ -19,16 +22,16 @@ public class Main
 		{
 			if(commandQueue.hasUndoableCommands())
 			{
-				System.out.println("Move up, down, left, right, OR undo: ");
+				System.out.println("(U)p, (D)own, (L)eft, (R)ight, or Go (B)ack: ");
 			}
 			else
 			{
-				System.out.println("Move up, down, left, or right: ");
+				System.out.println("(U)p, (D)own, (L)eft, or (R)ight: ");
 			}
 			
-			userInput = scanner.nextLine().toUpperCase();
+			userInput = scanner.nextLine().toUpperCase().charAt(0);
 			
-			if(commandQueue.hasUndoableCommands() && userInput.equals("UNDO"))
+			if(commandQueue.hasUndoableCommands() && userInput == 'B')
 			{
 				commandQueue.undoLastCommand();
 			}

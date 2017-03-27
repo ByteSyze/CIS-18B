@@ -1,5 +1,8 @@
 package me.tyler.command;
 
+/**
+ * A command for moving a CartesianPlayer.
+ * */
 public class MoveCommand implements ReversibleCommand
 {
 	private CartesianPlayer player;
@@ -14,7 +17,11 @@ public class MoveCommand implements ReversibleCommand
 		
 		this.spaces = spaces;
 	}
-	
+
+	/**
+	 * When invoked, calls {@link CartesianPlayer#move move()} on the {@link CartesianPlayer}
+	 * passed through the constructor, using the given direction and spaces as well.
+	 * */
 	@Override
 	public void execute() 
 	{
