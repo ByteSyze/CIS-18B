@@ -1,11 +1,16 @@
 package tic.tac.toe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import tic.tac.toe.command.PlayerMove;
 import tic.tac.toe.command.ReversibleCommandQueue;
-import tic.tac.toe.event.PlayerMoveEvent;
-import tic.tac.toe.event.PlayerTurnChangeEvent;
+import tic.tac.toe.event.game.GameWinEvent;
+import tic.tac.toe.event.player.PlayerMoveEvent;
+import tic.tac.toe.event.player.PlayerTurnChangeEvent;
 import tic.tac.toe.listeners.PlayerMoveListener;
 import tic.tac.toe.listeners.PlayerTurnListener;
+import tic.tac.toe.listeners.game.GameWinListener;
 
 /**
  * Manages the game's mechanics and rules through listeners
@@ -14,6 +19,11 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 {
 	private static GameManager instance;
 	
+	/**
+	 * Returns the single instance of GameManager.
+	 * 
+	 * If no instance currently exists, an instance will be created first.
+	 * */
 	public static GameManager getInstance()
 	{
 		if(instance != null)
@@ -22,18 +32,17 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 			return (instance = new GameManager());
 	}
 	
-	public enum Player
-	{
-		X, O
-	}
+	public enum Player { X, O }
 	
 	/**The player that goes next.*/
 	private Player turn;
 	
-	private boolean gameRunning = true;
+	private boolean gameOver = false;
 	
 	/**The history of player moves.*/
 	private ReversibleCommandQueue playerMoves;
+	
+	private List<GameWinListener> winListeners;
 
 	/**A map of player 1's moves on the current board.*/
 	private int playerXMap[][] = {{0, 0, 0},
@@ -50,6 +59,8 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 		turn = Player.X;
 		
 		playerMoves = new ReversibleCommandQueue();
+		
+		winListeners = new ArrayList<GameWinListener>();
 	}
 	
 	protected void setTurn(Player turn)
@@ -62,9 +73,26 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 		return this.turn;
 	}
 	
+	public boolean isGameOver()
+	{
+		return this.gameOver;
+	}
+	
 	public void addPlayerMove(PlayerMove move)
 	{
 		playerMoves.addCommand(move);
+	}
+	
+	public void setMapAt(Player player, int x, int y, int val)
+	{
+		if(player == Player.X)
+		{
+			playerXMap[x][y] = val;
+		}
+		else if(player == Player.O)
+		{
+			playerOMap[x][y] = val;
+		}
 	}
 	
 	public boolean executeNextMove()
@@ -72,9 +100,24 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 		return playerMoves.executeNextCommand();
 	}
 	
+	public void undoLastMove()
+	{
+		playerMoves.undoLastCommand();
+	}
+	
 	public void executeAllPendingMoves()
 	{
 		while(playerMoves.executeNextCommand());
+	}
+	
+	public void registerWinListener(GameWinListener listener)
+	{
+		this.winListeners.add(listener);
+	}
+	
+	public void unregisterWinListener(GameWinListener listener)
+	{
+		this.winListeners.remove(listener);
 	}
 	
 	@Override
@@ -86,21 +129,10 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 	@Override
 	public void onPlayerMove(PlayerMoveEvent e)
 	{
-		if((e.getButton().getPlayer() != null) || (!this.gameRunning))
+		if((e.getButton().getPlayer() != null) || (this.gameOver))
 		{
 			//If the player chose an already occupied spot, cancel this event.
 			e.setCancelled(true);
-		}
-		else
-		{
-			if(e.getPlayer() == Player.X)
-			{
-				playerXMap[e.getButton().getXIndex()][e.getButton().getYIndex()] = 1;
-			}
-			else if(e.getPlayer() == Player.O)
-			{
-				playerOMap[e.getButton().getXIndex()][e.getButton().getYIndex()] = 1;
-			}
 		}
 	}
 	
@@ -116,7 +148,7 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 				if(map[x][y] != 1)
 					break;
 				if(y == 2)
-					win(player);
+					fireWinEvent(player);
 			}
 		}
 		//Horizontal test
@@ -127,7 +159,7 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 				if(map[y][x] != 1)
 					break;
 				if(y == 2)
-					win(player);
+					fireWinEvent(player);
 			}
 		}
 		
@@ -137,7 +169,7 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 			if(map[x][x] != 1)
 				break;
 			if(x == 2)
-				win(player);
+				fireWinEvent(player);
 		}
 		
 		//Diagonal test 2
@@ -146,14 +178,18 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 			if(map[x][2-x] != 1)
 				break;
 			if(x == 2)
-				win(player);
+				fireWinEvent(player);
 		}
 	}
 	
-	protected void win(Player player)
+	protected void fireWinEvent(Player player)
 	{
-		System.out.println("Winnner "  + player);
-		this.gameRunning = false;
+		GameWinEvent winEvent = new GameWinEvent(player);
+		
+		for(GameWinListener listener : this.winListeners)
+			listener.onGameWin(winEvent);
+		
+		this.gameOver = true;
 	}
 
 }

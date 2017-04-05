@@ -27,6 +27,7 @@ public class PlayerMove implements ReversibleCommand
 		button.setPlayer(player);
 		button.setText(player.name());
 		
+		GameManager.getInstance().setMapAt(player, button.getXIndex(), button.getYIndex(), 1);
 		GameManager.getInstance().checkforWin(player);
 	}
 
@@ -35,6 +36,9 @@ public class PlayerMove implements ReversibleCommand
 	{
 		button.setPlayer(oldPlayer);
 		button.setText(oldText);
+		
+		GameManager.getInstance().setMapAt(player, button.getXIndex(), button.getYIndex(), 0);
+		//TODO fix player turn
 	}
 
 }

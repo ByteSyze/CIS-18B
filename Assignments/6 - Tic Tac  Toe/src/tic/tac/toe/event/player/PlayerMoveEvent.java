@@ -1,6 +1,7 @@
-package tic.tac.toe.event;
+package tic.tac.toe.event.player;
 
 import tic.tac.toe.GameManager.Player;
+import tic.tac.toe.event.CancellableEvent;
 import tic.tac.toe.ui.TicTacButton;
 
 public class PlayerMoveEvent extends CancellableEvent

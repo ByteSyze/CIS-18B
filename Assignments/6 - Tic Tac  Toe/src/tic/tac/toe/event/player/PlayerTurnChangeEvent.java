@@ -1,4 +1,4 @@
-package tic.tac.toe.event;
+package tic.tac.toe.event.player;
 
 import tic.tac.toe.GameManager.Player;
 
