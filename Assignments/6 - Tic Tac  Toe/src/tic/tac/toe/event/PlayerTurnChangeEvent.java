@@ -1,8 +1,8 @@
 package tic.tac.toe.event;
 
-import tic.tac.toe.manager.GameManager.Player;
+import tic.tac.toe.GameManager.Player;
 
-public class PlayerTurnChangeEvent extends CancellableEvent
+public class PlayerTurnChangeEvent
 {
 	private Player lastTurn, nextTurn;
 	

@@ -1,7 +1,7 @@
 package tic.tac.toe.event;
 
-import tic.tac.toe.gui.TicTacButton;
-import tic.tac.toe.manager.GameManager.Player;
+import tic.tac.toe.GameManager.Player;
+import tic.tac.toe.ui.TicTacButton;
 
 public class PlayerMoveEvent extends CancellableEvent
 {

@@ -9,13 +9,12 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import tic.tac.toe.GameManager.Player;
 import tic.tac.toe.command.PlayerMove;
 import tic.tac.toe.event.PlayerMoveEvent;
 import tic.tac.toe.event.PlayerTurnChangeEvent;
-import tic.tac.toe.gui.TicTacButton;
 import tic.tac.toe.listeners.*;
-import tic.tac.toe.manager.GameManager;
-import tic.tac.toe.manager.GameManager.Player;
+import tic.tac.toe.ui.TicTacButton;
 
 public final class Board extends JPanel implements ActionListener
 {
@@ -75,7 +74,7 @@ public final class Board extends JPanel implements ActionListener
 	{
 		PlayerMoveEvent moveEvent = new PlayerMoveEvent(GameManager.getInstance().getCurrentTurn(), (TicTacButton)e.getSource());
 		
-		for(int i = this.moveListeners.size()-1; i > 0; i--)
+		for(int i = this.moveListeners.size()-1; i >= 0; i--)
 			this.moveListeners.get(i).onPlayerMove(moveEvent);
 		
 		if(moveEvent.getCancelled() == false)
@@ -84,6 +83,7 @@ public final class Board extends JPanel implements ActionListener
 			PlayerMove successfulMove = new PlayerMove(moveEvent.getPlayer(), moveEvent.getButton());
 			
 			GameManager.getInstance().addPlayerMove(successfulMove);
+			GameManager.getInstance().executeAllPendingMoves();
 
 			//Once a move has been successfully made, fire a player turn change event.
 			Player lastPlayer = GameManager.getInstance().getCurrentTurn();
@@ -91,7 +91,8 @@ public final class Board extends JPanel implements ActionListener
 			
 			PlayerTurnChangeEvent turnEvent = new PlayerTurnChangeEvent(lastPlayer, nextPlayer);
 
-			for(int i = this.turnListeners.size()-1; i > 0; i--)
+			//Turn events can't be cancelled, so send and forget.
+			for(int i = this.turnListeners.size()-1; i >= 0; i--)
 				this.turnListeners.get(i).onPlayerTurnChange(turnEvent);
 		}
 		
