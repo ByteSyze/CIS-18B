@@ -2,11 +2,11 @@ package tic.tac.toe.event.game;
 
 import tic.tac.toe.GameManager.Player;
 
-public class GameWinEvent 
+public class GameEndEvent 
 {
 	private Player winner;
 	
-	public GameWinEvent(Player winner)
+	public GameEndEvent(Player winner)
 	{
 		this.winner = winner;
 	}

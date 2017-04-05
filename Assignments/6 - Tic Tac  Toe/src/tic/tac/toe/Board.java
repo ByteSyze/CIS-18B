@@ -1,6 +1,7 @@
 package tic.tac.toe;
 
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import tic.tac.toe.command.PlayerMove;
 import tic.tac.toe.event.player.PlayerMoveEvent;
 import tic.tac.toe.event.player.PlayerTurnChangeEvent;
 import tic.tac.toe.listeners.*;
+import tic.tac.toe.ui.ButtonFactory;
+import tic.tac.toe.ui.PlayerButton;
 import tic.tac.toe.ui.TicTacButton;
 
 public final class Board extends JPanel implements ActionListener
@@ -25,6 +28,8 @@ public final class Board extends JPanel implements ActionListener
 	
 	/**Listeners for new moves made by players.*/
 	private List<PlayerMoveListener> moveListeners;
+	
+	private GridBagConstraints constraints;
 
 	public Board()
 	{
@@ -33,17 +38,40 @@ public final class Board extends JPanel implements ActionListener
 		this.turnListeners = new ArrayList<PlayerTurnListener>();
 		this.moveListeners = new ArrayList<PlayerMoveListener>();
 		
-		this.setLayout(new GridLayout(3, 3));
+		constraints = new GridBagConstraints();
+		
+		constraints.ipadx = constraints.ipady = 40;
+		constraints.fill = GridBagConstraints.BOTH;
+		
+		this.setLayout(new GridBagLayout());
 		
 		//Generate a 3x3 grid of buttons.
 		for(int i = 0; i < 9; i++)
 		{
-			JButton nextButton = new TicTacButton(i%3, i/3);
+			int xIdx = i%3;
+			int yIdx = i/3;
+			
+			JButton nextButton = ButtonFactory.createButton(xIdx, yIdx, null);
 			
 			nextButton.addActionListener(this);
 			
-			this.add(nextButton);
+			constraints.gridx = xIdx;
+			constraints.gridy = yIdx;
+			
+			this.add(nextButton, constraints);
 		}
+	}
+	
+	/**
+	 * Nothing makes sense anymore...
+	 * */
+	public void swapButtons(TicTacButton oldButton, TicTacButton newButton)
+	{
+		constraints.gridx = newButton.getXIndex();
+		constraints.gridy = newButton.getYIndex();
+		
+		this.remove(oldButton);
+		this.add(newButton, constraints);
 	}
 	
 	public void registerTurnListener(PlayerTurnListener listener)
@@ -74,13 +102,11 @@ public final class Board extends JPanel implements ActionListener
 	{
 		PlayerMoveEvent moveEvent = new PlayerMoveEvent(GameManager.getInstance().getCurrentTurn(), (TicTacButton)e.getSource());
 		
-		for(int i = this.moveListeners.size()-1; i >= 0; i--)
-			this.moveListeners.get(i).onPlayerMove(moveEvent);
-		
-		if(moveEvent.getCancelled() == false)
+		if(fireMoveEvent(moveEvent))
 		{
 			//Nobody cancelled us! Let's actually do this thing.
-			PlayerMove successfulMove = new PlayerMove(moveEvent.getPlayer(), moveEvent.getButton());
+			TicTacButton newButton = ButtonFactory.createButton(moveEvent.getButton().getXIndex(), moveEvent.getButton().getYIndex(), moveEvent.getPlayer());
+			PlayerMove successfulMove = new PlayerMove(this, moveEvent.getPlayer(), (PlayerButton)newButton);
 			
 			GameManager.getInstance().addPlayerMove(successfulMove);
 			GameManager.getInstance().executeAllPendingMoves();
@@ -93,11 +119,26 @@ public final class Board extends JPanel implements ActionListener
 				Player nextPlayer = (lastPlayer == Player.X) ? Player.O : Player.X;
 				
 				PlayerTurnChangeEvent turnEvent = new PlayerTurnChangeEvent(lastPlayer, nextPlayer);
-	
-				//Turn events can't be cancelled, so send and forget.
-				for(int i = this.turnListeners.size()-1; i >= 0; i--)
-					this.turnListeners.get(i).onPlayerTurnChange(turnEvent);
+				fireTurnEvent(turnEvent);
 			}
 		}
+	}
+	
+	/**
+	 * @return true if the event was successful
+	 * */
+	public boolean fireMoveEvent(PlayerMoveEvent e)
+	{
+		for(int i = this.moveListeners.size()-1; i >= 0; i--)
+			this.moveListeners.get(i).onPlayerMove(e);
+		
+		return !e.getCancelled();
+	}
+	
+	public void fireTurnEvent(PlayerTurnChangeEvent e)
+	{
+		//Turn events can't be cancelled, so send and forget.
+		for(int i = this.turnListeners.size()-1; i >= 0; i--)
+			this.turnListeners.get(i).onPlayerTurnChange(e);
 	}
 }

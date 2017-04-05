@@ -26,7 +26,14 @@ public class Main
 		
 		JButton undoButton = new JButton("undo");
 		
-		undoButton.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent arg0){ GameManager.getInstance().undoLastMove(); }});
+		undoButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent arg0)
+			{ 
+				if(!GameManager.getInstance().isGameOver())
+					GameManager.getInstance().undoLastMove(); 
+			}
+		});
 		
 		//All game mechanics depend on the Game Manager's ability to listen to events.
 		//In other words, these lines are absolutely vital.

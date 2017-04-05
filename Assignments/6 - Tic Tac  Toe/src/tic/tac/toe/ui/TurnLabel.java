@@ -3,12 +3,12 @@ package tic.tac.toe.ui;
 import javax.swing.JLabel;
 
 import tic.tac.toe.GameManager;
-import tic.tac.toe.event.game.GameWinEvent;
+import tic.tac.toe.event.game.GameEndEvent;
 import tic.tac.toe.event.player.PlayerTurnChangeEvent;
 import tic.tac.toe.listeners.PlayerTurnListener;
-import tic.tac.toe.listeners.game.GameWinListener;
+import tic.tac.toe.listeners.game.GameEndListener;
 
-public class TurnLabel extends JLabel implements PlayerTurnListener, GameWinListener
+public class TurnLabel extends JLabel implements PlayerTurnListener, GameEndListener
 {
 	private static final long serialVersionUID = -5293776413892269343L;
 
@@ -24,7 +24,7 @@ public class TurnLabel extends JLabel implements PlayerTurnListener, GameWinList
 	}
 
 	@Override
-	public void onGameWin(GameWinEvent e)
+	public void onGameEnd(GameEndEvent e)
 	{
 		this.setText("Player " + e.getWinner() + " wins!");
 	}
