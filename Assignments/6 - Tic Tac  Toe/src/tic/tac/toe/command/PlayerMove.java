@@ -14,27 +14,19 @@ public class PlayerMove implements ReversibleCommand
 	private Board gameBoard; 
 	
 	private PlayerButton button;
-	//private Player player;
 	
 	private TicTacButton oldButton;
 	
 	public PlayerMove(Board gameBoard, Player player, PlayerButton button)
 	{
 		this.gameBoard = gameBoard;
-		
-		//this.player = player;
 		this.button = button;
-		
-		//this.oldText = button.getText();
-		//this.oldPlayer = button.getPlayer();
 	}
 
 	@Override
 	public void execute() 
 	{
-		//button.setPlayer(player);
-		//button.setText(player.name());
-		
+		//Find the old button and swap it out with our new button.
 		for(Component c : gameBoard.getComponents())
 		{
 			if(c instanceof TicTacButton)
@@ -47,20 +39,19 @@ public class PlayerMove implements ReversibleCommand
 					
 					gameBoard.swapButtons(b, button);
 					gameBoard.repaint();
+					
+					button.requestFocus();
 				}
 			}
 		}
 		
 		GameManager.getInstance().setMapAt(button.getPlayer(), button.getXIndex(), button.getYIndex(), 1);
-		GameManager.getInstance().checkforWin(button.getPlayer());
+		GameManager.getInstance().checkForGameEnd(button.getPlayer());
 	}
 
 	@Override
 	public void undo() 
 	{
-		//button.setPlayer(oldPlayer);
-		//button.setText(oldText);
-		
 		GameManager.getInstance().setMapAt(button.getPlayer(), button.getXIndex(), button.getYIndex(), 0);
 		
 		gameBoard.swapButtons(button, oldButton);

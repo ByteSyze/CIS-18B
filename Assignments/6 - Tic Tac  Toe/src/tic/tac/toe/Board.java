@@ -67,8 +67,8 @@ public final class Board extends JPanel implements ActionListener
 	 * */
 	public void swapButtons(TicTacButton oldButton, TicTacButton newButton)
 	{
-		constraints.gridx = newButton.getXIndex();
-		constraints.gridy = newButton.getYIndex();
+		constraints.gridx = oldButton.getXIndex();
+		constraints.gridy = oldButton.getYIndex();
 		
 		this.remove(oldButton);
 		this.add(newButton, constraints);

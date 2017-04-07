@@ -26,7 +26,10 @@ public class TurnLabel extends JLabel implements PlayerTurnListener, GameEndList
 	@Override
 	public void onGameEnd(GameEndEvent e)
 	{
-		this.setText("Player " + e.getWinner() + " wins!");
+		if(e.getWinner() != null)
+			this.setText("Player " + e.getWinner() + " wins!");
+		else
+			this.setText("Cat's Game :(");
 	}
 
 }

@@ -43,7 +43,7 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 	/**The history of player moves.*/
 	private ReversibleCommandQueue playerMoves;
 	
-	private List<GameEndListener> winListeners;
+	private List<GameEndListener> endListeners;
 
 	/**A map of player 1's moves on the current board.*/
 	private int playerXMap[][] = {{0, 0, 0},
@@ -61,7 +61,7 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 		
 		playerMoves = new ReversibleCommandQueue();
 		
-		winListeners = new ArrayList<GameEndListener>();
+		endListeners = new ArrayList<GameEndListener>();
 	}
 	
 	protected void setTurn(Player turn)
@@ -113,12 +113,12 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 	
 	public void registerWinListener(GameEndListener listener)
 	{
-		this.winListeners.add(listener);
+		this.endListeners.add(listener);
 	}
 	
 	public void unregisterWinListener(GameEndListener listener)
 	{
-		this.winListeners.remove(listener);
+		this.endListeners.remove(listener);
 	}
 	
 	@Override
@@ -137,7 +137,7 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 		}
 	}
 	
-	public boolean checkforWin(Player player)
+	public boolean checkForGameEnd(Player player)
 	{
 		int[][] map = (player == Player.X) ? playerXMap : playerOMap;
 		
@@ -150,7 +150,7 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 					break;
 				if(y == 2)
 				{
-					fireWinEvent(player);
+					fireGameEndEvent(player);
 					return true;
 				}
 			}
@@ -164,7 +164,7 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 					break;
 				if(y == 2)
 				{
-					fireWinEvent(player);
+					fireGameEndEvent(player);
 					return true;
 				}
 			}
@@ -177,7 +177,7 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 				break;
 			if(x == 2)
 			{
-				fireWinEvent(player);
+				fireGameEndEvent(player);
 				return true;
 			}
 		}
@@ -189,20 +189,34 @@ public class GameManager implements PlayerTurnListener, PlayerMoveListener
 				break;
 			if(x == 2)
 			{
-				fireWinEvent(player);
+				fireGameEndEvent(player);
 				return true;
 			}
 		}
 		
-		return false;
+		for(int i = 0; i < 9; i++)
+		{
+			int x = i%3;
+			int y = i/3;
+			
+			if((playerXMap[x][y]  | playerOMap[x][y]) == 0)
+			{
+				//No win condition was hit, and there is at least one available spot to play.
+				return false;
+			}
+		}
+		
+		//No win condition and no available spots. Cat's game.
+		fireGameEndEvent(null);
+		return true;
 	}
 	
-	protected void fireWinEvent(Player player)
+	protected void fireGameEndEvent(Player player)
 	{
-		GameEndEvent winEvent = new GameEndEvent(player);
+		GameEndEvent endEvent = new GameEndEvent(player);
 		
-		for(GameEndListener listener : this.winListeners)
-			listener.onGameEnd(winEvent);
+		for(GameEndListener listener : this.endListeners)
+			listener.onGameEnd(endEvent);
 		
 		this.gameOver = true;
 	}
