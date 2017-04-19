@@ -3,7 +3,7 @@ package template.algorithm;
 /**
  * Some process that manipulates {@code data} when {@link Algorithm#algore(T data) algore()} is called.
  * */
-public interface Algorithm<T>
+public interface Algorithm<R,D>
 {
 	
 	/**
@@ -12,6 +12,6 @@ public interface Algorithm<T>
 	 * 
 	 * @return the data processed by the algorithm.
 	 * */
-	public T algore(T data, Object... metadata);
+	public R algore(D data, Object... metadata);
 
 }

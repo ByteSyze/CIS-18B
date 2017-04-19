@@ -1,7 +1,5 @@
 package template.algorithm;
 
-import java.util.HashMap;
-
 import template.algorithm.exception.PipelineDiscrepancyException;
 
 /**
@@ -9,27 +7,39 @@ import template.algorithm.exception.PipelineDiscrepancyException;
  * 
  * <p>The MetaAlgorithm class acts as a simple manager for pipelined algorithms.</p>
  * */
-public class MetaAlgorithm<A extends PipelinedAlgorithm<T>, T>
+public class MetaAlgorithm<A extends PipelinedAlgorithm<R,D,?,?>, R, D>
 {
 	/**The root of the algorithm pipeline.*/
 	private A root;
+	private PipelinedAlgorithm tail;
 	
 	/**The primary data to be processed by the pipeline.*/
-	private T data;
+	private D data;
 	
-	public MetaAlgorithm(T data)
+	public MetaAlgorithm(D data)
 	{
 		this.data = data;
+		
+		root = null;
+		tail = null;
 	}
 	
 	/**
 	 * Adds {@code algorithm} to the end of the algorithm pipeline.
 	 * */
-	public void addAlgorithm(A algorithm)
+	public void addAlgorithm(PipelinedAlgorithm algorithm)
 	{
-		root.setNextAlgorithm(algorithm);
-		
-		root = algorithm;
+		if(root == null)
+		{
+			root = root;
+			tail = root;
+		}
+		else
+		{
+			tail.setNextAlgorithm(algorithm);
+			
+			tail = algorithm;
+		}
 	}
 	
 	/**
@@ -39,10 +49,10 @@ public class MetaAlgorithm<A extends PipelinedAlgorithm<T>, T>
 	 * are incomplete. If any algorithms are incomplete, the data is passed through
 	 * the pipeline again until all algorithms are complete.</p>
 	 * */
-	public T process()
+	public R process()
 	{
-		T lastData = null;
-		T processedData = pass();
+		R lastData = null;
+		R processedData = pass();
 		
 		while(!this.isComplete())
 		{
@@ -59,9 +69,9 @@ public class MetaAlgorithm<A extends PipelinedAlgorithm<T>, T>
 	/**
 	 * Does a single "pass" through the algorithm pipeline.
 	 * */
-	public T pass(Object... metadata)
+	public R pass(Object... metadata)
 	{
-		return root.pipelinedAlgore(data, metadata);
+		return root.algore(data, metadata);
 	}
 	
 	/**
@@ -72,9 +82,9 @@ public class MetaAlgorithm<A extends PipelinedAlgorithm<T>, T>
 		return (this.getFirstIncompleteAlgorithm() == null);
 	}
 	
-	private PipelinedAlgorithm<T> getFirstIncompleteAlgorithm()
+	private PipelinedAlgorithm<?,?,?,?> getFirstIncompleteAlgorithm()
 	{
-		PipelinedAlgorithm<T> candidate = root;
+		PipelinedAlgorithm<?,?,?,?> candidate = root;
 		
 		//Search the pipeline for an incomplete algorithm.
 		while(candidate.isComplete())

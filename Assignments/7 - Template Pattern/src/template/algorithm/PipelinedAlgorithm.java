@@ -1,19 +1,23 @@
 package template.algorithm;
 
-import java.util.HashMap;
-
-public abstract class PipelinedAlgorithm<T> implements Algorithm<T>
+/**
+ * @param <R> Return data from this algorithm
+ * @param <D> Data given to this algorithm
+ * @param <P> Data given to the next algorithm
+ * @param <V> Return data from the next algorithm
+ * */
+public abstract class PipelinedAlgorithm<R,D,P,V> implements Algorithm<R,D>
 {
-	private PipelinedAlgorithm<T> nextAlgorithm;
+	private PipelinedAlgorithm<V,P,?,?> nextAlgorithm;
 	
 	private boolean complete = false;
 	
-	public void setNextAlgorithm(PipelinedAlgorithm<T> nextAlgorithm)
+	public void setNextAlgorithm(PipelinedAlgorithm<V,P,?,?> nextAlgorithm)
 	{
 		this.nextAlgorithm = nextAlgorithm;
 	}
 	
-	protected PipelinedAlgorithm<T> getNextAlgorithm()
+	protected PipelinedAlgorithm<V,P,?,?> getNextAlgorithm()
 	{
 		return this.nextAlgorithm;
 	}
@@ -32,9 +36,9 @@ public abstract class PipelinedAlgorithm<T> implements Algorithm<T>
 		return this.complete;
 	}
 	
-	public final T pipelinedAlgore(T data, Object... metadata)
+	/*public final R pipelinedAlgore(R data, Object... metadata)
 	{
-		T processedData = this.algore(data, metadata);
+		R processedData = this.algore(data, metadata);
 		
 		//If the pipeline continues, give the next algorithm our processed data.
 		if(nextAlgorithm != null)
@@ -45,5 +49,5 @@ public abstract class PipelinedAlgorithm<T> implements Algorithm<T>
 		{
 			return processedData;
 		}
-	}
+	}*/
 }
