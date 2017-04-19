@@ -10,7 +10,7 @@ public abstract class PipelinedAlgorithm<R,D,P,V> implements Algorithm<R,D>
 {
 	private PipelinedAlgorithm<V,P,?,?> nextAlgorithm;
 	
-	private boolean complete = false;
+	private boolean complete = true;
 	
 	public void setNextAlgorithm(PipelinedAlgorithm<V,P,?,?> nextAlgorithm)
 	{

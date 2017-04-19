@@ -35,7 +35,6 @@ public class Partitioner<T extends Comparable<? super T>> extends PipelinedAlgor
 		data.set(hi, temp1);
 		data.set(i+1, temp2);
 		
-		
 		return i + 1;
 	}
 

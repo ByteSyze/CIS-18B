@@ -5,7 +5,9 @@ import template.algorithm.exception.PipelineDiscrepancyException;
 /**
  * An algorithm comprised of algorithms.
  * 
- * <p>The MetaAlgorithm class acts as a simple manager for pipelined algorithms.</p>
+ * <p>The MetaAlgorithm class acts as a simple manager for pipelined algorithms. The main
+ * advantage to using a MetaAlgorithm is automated management of algorithms that need to
+ * make multiple "passes" through some data.</p>
  * */
 public class MetaAlgorithm<A extends PipelinedAlgorithm<R,D,?,?>, R, D>
 {
@@ -48,8 +50,10 @@ public class MetaAlgorithm<A extends PipelinedAlgorithm<R,D,?,?>, R, D>
 	 * <p>Once the pipeline returns, the MetaAlgorithm checks for any algorithms that
 	 * are incomplete. If any algorithms are incomplete, the data is passed through
 	 * the pipeline again until all algorithms are complete.</p>
+	 * 
+	 * @throws PipelineDiscrepancyException if the algorithm seems to be stuck in an infinite loop
 	 * */
-	public R process()
+	public R process() throws PipelineDiscrepancyException
 	{
 		R lastData = null;
 		R processedData = pass();

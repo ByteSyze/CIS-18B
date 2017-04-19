@@ -22,10 +22,6 @@ public class QuickSorter<T extends Comparable<? super T>> extends PipelinedAlgor
 			this.algore(data, lo, p - 1);
 			this.algore(data, p + 1, hi);
 		}
-		else
-		{
-			this.setComplete(true);
-		}
 		
 		return data;
 	}
