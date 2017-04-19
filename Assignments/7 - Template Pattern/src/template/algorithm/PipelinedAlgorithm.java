@@ -1,6 +1,8 @@
 package template.algorithm;
 
-public abstract class PipelinedAlgorithm<T> extends Algorithm<T>
+import java.util.HashMap;
+
+public abstract class PipelinedAlgorithm<T> implements Algorithm<T>
 {
 	private PipelinedAlgorithm<T> nextAlgorithm;
 	
@@ -9,6 +11,11 @@ public abstract class PipelinedAlgorithm<T> extends Algorithm<T>
 	public void setNextAlgorithm(PipelinedAlgorithm<T> nextAlgorithm)
 	{
 		this.nextAlgorithm = nextAlgorithm;
+	}
+	
+	protected PipelinedAlgorithm<T> getNextAlgorithm()
+	{
+		return this.nextAlgorithm;
 	}
 	
 	protected void setComplete(boolean complete)
@@ -25,16 +32,14 @@ public abstract class PipelinedAlgorithm<T> extends Algorithm<T>
 		return this.complete;
 	}
 	
-	public final T pipelinedAlgore(T data)
+	public final T pipelinedAlgore(T data, Object... metadata)
 	{
-		T processedData = this.algore(data);
+		T processedData = this.algore(data, metadata);
 		
 		//If the pipeline continues, give the next algorithm our processed data.
 		if(nextAlgorithm != null)
 		{
-			nextAlgorithm.setData(processedData);
-			
-			return nextAlgorithm.pipelinedAlgore(processedData);
+			return nextAlgorithm.pipelinedAlgore(processedData, metadata);
 		}
 		else
 		{

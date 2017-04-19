@@ -12,8 +12,8 @@ public class Main
 	{
 		List<Integer> data = new ArrayList<Integer>();
 		
-		MetaAlgorithm<PipelinedAlgorithm<List<Integer>>, List<Integer>> quickSorter =
-							new MetaAlgorithm<PipelinedAlgorithm<List<Integer>>, List<Integer>>(data);
+		MetaAlgorithm<PipelinedAlgorithm<List<Integer>>, List<Integer>> quickSorter = 
+				new MetaAlgorithm<PipelinedAlgorithm<List<Integer>>, List<Integer>>(data);
 		
 		
 	}

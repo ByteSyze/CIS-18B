@@ -1,13 +1,15 @@
 package template.algorithm;
 
-public class Partitioner<T> extends Algorithm<Iterable<Comparable<T>>>
+import java.util.List;
+
+public class Partitioner<T> implements Algorithm<List<Comparable<T>>>
 {
 
 	@Override
-	public Iterable<Comparable<T>> algore(Iterable<Comparable<T>> data)
+	public List<Comparable<T>> algore(List<Comparable<T>> data, Object... metadata)
 	{
 		
-		return null;
+		return data;
 	}
 
 }
