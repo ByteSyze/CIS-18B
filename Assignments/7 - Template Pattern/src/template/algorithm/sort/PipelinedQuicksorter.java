@@ -1,12 +1,14 @@
-package template.algorithm;
+package template.algorithm.sort;
 
 import java.util.List;
+
+import template.algorithm.PipelinedAlgorithm;
 
 /**
  * Sorts a list of comparable items. QuickSorter must be followed by a partitioner
  * in the algorithm pipeline in order to make sense.
  * */
-public class QuickSorter<T extends Comparable<? super T>> extends PipelinedAlgorithm<List<T>, List<T>, List<T>, Integer>
+public class PipelinedQuicksorter<T extends Comparable<? super T>> extends PipelinedAlgorithm<List<T>, List<T>, List<T>, Integer>
 {
 
 	@Override

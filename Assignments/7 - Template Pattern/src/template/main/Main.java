@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import template.algorithm.*;
+import template.algorithm.sort.PipelinedGrapher;
+import template.algorithm.sort.PipelinedLomutoPartitioner;
+import template.algorithm.sort.PipelinedQuicksorter;
 import template.sort.HoareQuicksorter;
 import template.sort.LomutoQuicksorter;
 import template.sort.Quicksorter;
@@ -64,10 +66,12 @@ public class Main
 		System.out.println("---Pipelined quicksort algorithm test---");
 		
 		
-		PipelinedQuickSorter<Integer> numSorter = new PipelinedQuickSorter<Integer>();
+		PipelinedQuicksorter<Integer> numSorter = new PipelinedQuicksorter<Integer>();
 		PipelinedLomutoPartitioner<Integer> numPartitioner = new PipelinedLomutoPartitioner<Integer>();
+		PipelinedGrapher grapher = new PipelinedGrapher(graph("Pipelined Numbers", numData));
 		
 		numSorter.setNextAlgorithm(numPartitioner);
+		numPartitioner.setNextAlgorithm(grapher);
 		
 		printList("Unsorted numbers:", numData);
 		
@@ -82,7 +86,7 @@ public class Main
 		//////////////////////////////
 		
 		
-		PipelinedQuickSorter<String> stringSorter = new PipelinedQuickSorter<String>();
+		PipelinedQuicksorter<String> stringSorter = new PipelinedQuicksorter<String>();
 		PipelinedLomutoPartitioner<String> stringPartitioner = new PipelinedLomutoPartitioner<String>();
 		
 		stringSorter.setNextAlgorithm(stringPartitioner);
@@ -102,10 +106,12 @@ public class Main
 		Quicksorter<Integer> numSorter = new HoareQuicksorter<Integer>();
 		
 		printList("Unsorted numbers:", numData);
+		graph("Unsorted Numbers", numData);
 		
 		numSorter.sort(numData, 0, numData.size()-1);
 		
 		printList("  Sorted numbers:", numData);
+		graph("Sorted Numbers", numData);
 		
 		LomutoQuicksorter<String> stringSorter = new LomutoQuicksorter<String>();
 		
@@ -125,5 +131,12 @@ public class Main
 
 		System.out.println(")");		
 	}
-
+	
+	/**
+	 * Convenience method for creating and returning a new BarGraph of the given data.
+	 * */
+	public static BarGraph graph(String title, List<Integer> numbers)
+	{
+		return new BarGraph(title, numbers);
+	}
 }

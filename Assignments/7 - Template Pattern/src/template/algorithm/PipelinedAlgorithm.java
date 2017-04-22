@@ -35,19 +35,4 @@ public abstract class PipelinedAlgorithm<R,D,P,V> implements Algorithm<R,D>
 	{
 		return this.complete;
 	}
-	
-	/*public final R pipelinedAlgore(R data, Object... metadata)
-	{
-		R processedData = this.algore(data, metadata);
-		
-		//If the pipeline continues, give the next algorithm our processed data.
-		if(nextAlgorithm != null)
-		{
-			return nextAlgorithm.pipelinedAlgore(processedData, metadata);
-		}
-		else
-		{
-			return processedData;
-		}
-	}*/
 }

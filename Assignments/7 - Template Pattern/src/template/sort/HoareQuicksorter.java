@@ -46,8 +46,6 @@ public class HoareQuicksorter<T extends Comparable<? super T>> extends Quicksort
 			items.set(j, item1);
 			items.set(i, item2);
 		}
-		
-		//return 0;
 	}
 
 }
