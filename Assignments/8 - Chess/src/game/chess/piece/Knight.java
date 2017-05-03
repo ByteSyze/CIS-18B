@@ -23,7 +23,8 @@ public class Knight extends ChessPiece
 	public void draw(Graphics2D g)
 	{
 		g.setColor(getOwner().getColor());
-		g.fill(KNIGHT_MODEL);
+		g.drawString(this.getClass().getSimpleName(), 10, 25);
+		//g.fill(KNIGHT_MODEL);
 	}
 
 	@Override

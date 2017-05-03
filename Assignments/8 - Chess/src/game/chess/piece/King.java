@@ -26,7 +26,8 @@ public class King extends ChessPiece
 	public void draw(Graphics2D g)
 	{
 		g.setColor(getOwner().getColor());
-		g.fillOval(0, 0, (int)getComponentWidth(), (int)getComponentHeight());
+		g.drawString(this.getClass().getSimpleName(), 10, 25);
+		//g.fillOval(0, 0, (int)getComponentWidth(), (int)getComponentHeight());
 	}
 
 	@Override

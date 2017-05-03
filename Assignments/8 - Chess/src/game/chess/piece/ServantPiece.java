@@ -98,7 +98,22 @@ public class ServantPiece extends ChessPieceFeature
 			{
 				//If there is only one enemy chess piece in range
 				//of the King, check for ways to take out that piece.
-				
+				if(targetEnemies.size() == 1)
+				{
+					ChessPiece target = targetEnemies.get(0);
+					
+					for(ChessMove move : oldValidMoves)
+					{
+						for(ChessMove chain : move.asList())
+						{
+							if(Position.add(chessPiece.getBoardPosition(), chain).equals(target.getBoardPosition()))
+							{
+								chain.setNextMove(null);
+								validMoves.add(chain);
+							}
+						}
+					}
+				}
 			}
 			
 			return validMoves;

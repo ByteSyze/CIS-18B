@@ -14,6 +14,7 @@ import game.GameObject;
 import game.chess.piece.ChessPiece;
 import game.chess.piece.King;
 import game.chess.piece.Knight;
+import game.chess.piece.Bishop;
 import game.chess.piece.BoundedPiece;
 import game.chess.piece.Rook;
 import game.chess.piece.ServantPiece;
@@ -170,6 +171,15 @@ public class Chess extends Game2D
 		player1.addAlivePiece(rook);
 		chessPieces.add(rook);
 		this.setPieceAt(rook.getBoardPosition(), rook);
+		
+		ChessPiece bishop = new Bishop(player1, new Position(2,0));
+		bishop = new SymmetricalPiece(bishop);
+		bishop = new BoundedPiece(bishop, this);
+		bishop = new ServantPiece(bishop, this);
+		
+		player1.addAlivePiece(bishop);
+		chessPieces.add(bishop);
+		this.setPieceAt(bishop.getBoardPosition(), bishop);
 		
 		ChessPiece k2 = new King(player2, new Position(4,7));
 		k2 = new SymmetricalPiece(k2);

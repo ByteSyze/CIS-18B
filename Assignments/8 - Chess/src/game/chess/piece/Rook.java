@@ -25,7 +25,8 @@ public class Rook extends ChessPiece
 	public void draw(Graphics2D g)
 	{
 		g.setColor(getOwner().getColor());
-		g.fill(ROOK_MODEL);
+		g.drawString(this.getClass().getSimpleName(), 10, 25);
+		//g.fill(ROOK_MODEL);
 	}
 
 	@Override
