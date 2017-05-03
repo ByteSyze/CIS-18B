@@ -79,9 +79,10 @@ public class ChessMove extends Position implements Cloneable
 		
 		while(chain.getNextMove() != null)
 		{
-			chain = chain.getNextMove();
+			cloneChain.setNextMove(new ChessMove(chain.getNextMove().getX(), chain.getNextMove().getY()));
+			cloneChain.getNextMove().setPreviousMove(cloneChain);
 			
-			cloneChain.setNextMove(new ChessMove(chain.getX(), chain.getY()));
+			chain = chain.getNextMove();
 			cloneChain = cloneChain.getNextMove();
 		}
 		

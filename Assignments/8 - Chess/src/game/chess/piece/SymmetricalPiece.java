@@ -21,7 +21,6 @@ public class SymmetricalPiece extends ChessPieceFeature
 		
 		for(ChessMove move : simpleMoves)
 		{
-			
 			ChessMove m1 = move;
 			ChessMove m2 = new ChessMove(move.getY(), -move.getX());
 			ChessMove m3 = new ChessMove(-move.getX(), -move.getY());
@@ -39,6 +38,10 @@ public class SymmetricalPiece extends ChessPieceFeature
 				m2.setNextMove(new ChessMove(m1.getY(), -m1.getX()));
 				m3.setNextMove(new ChessMove(-m1.getX(), -m1.getY()));
 				m4.setNextMove(new ChessMove(-m1.getY(), m1.getX()));
+				
+				m2.getNextMove().setPreviousMove(m2);
+				m3.getNextMove().setPreviousMove(m3);
+				m4.getNextMove().setPreviousMove(m4);
 				
 				m2 = m2.getNextMove();
 				m3 = m3.getNextMove();

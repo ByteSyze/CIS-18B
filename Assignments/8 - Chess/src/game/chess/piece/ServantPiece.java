@@ -22,7 +22,9 @@ public class ServantPiece extends ChessPieceFeature
 	public List<ChessMove> getValidMoves()
 	{	
 		if(chess.getCurrentTurn() != chessPiece.getOwner())
+		{
 			return chessPiece.getValidMoves();
+		}
 		
 		ChessPlayer opponent = null;
 		Position kingPos = chessPiece.getOwner().getKing().getBoardPosition();

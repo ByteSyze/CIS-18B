@@ -31,7 +31,7 @@ public class ChessPlayer extends TurnBasedPlayer
 	}
 
 	@Override
-	public void fixedUpdate(Game2D game){}
+	public void update(Game2D game){}
 
 	@Override
 	public void onTurn(Game2D game)

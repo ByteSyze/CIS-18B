@@ -25,22 +25,28 @@ public abstract class ChessPiece implements GameObject
 	
 	private ChessPlayer owner;
 	
+	private boolean isCaptured;
+	
 	public ChessPiece(){}
 	
 	public ChessPiece(ChessPlayer owner, Position boardPosition)
 	{
 		this.owner = owner;
 		
+		this.isCaptured = false;
+		
 		this.boardPosition = boardPosition;
 		this.position = new ScaledPosition(boardPosition);
 		
 		this.position.setScale(50f);
 		
-		bounds = new Rectangle2D.Float(position.getX(),position.getY(),this.getComponentWidth(), this.getComponentHeight());
+		this.bounds = new Rectangle2D.Float(position.getX(),position.getY(),this.getComponentWidth(), this.getComponentHeight());
 	}
 	
-	public void fixedUpdate(Game2D game)
+	public void update(Game2D game)
 	{
+		//TODO use transforms to help with all of this junk.
+		
 		ScaledPosition scaledBoardPos = new ScaledPosition(getBoardPosition());
 		ScaledPosition pos = (ScaledPosition)getPosition();
 		
@@ -70,6 +76,21 @@ public abstract class ChessPiece implements GameObject
 		return bounds;
 	}
 	
+	public boolean isCaptured()
+	{
+		return isCaptured;
+	}
+	
+	public void setCaptured(boolean captured)
+	{
+		this.isCaptured = captured;
+	}
+	
+	public boolean isActive()
+	{
+		return !isCaptured();
+	}
+	
 	/**
 	 * Returns the true position of this chess piece.
 	 * */
@@ -81,6 +102,11 @@ public abstract class ChessPiece implements GameObject
 	public Position getBoardPosition()
 	{
 		return boardPosition;
+	}
+	
+	public void setBoardPosition(Position boardPosition)
+	{
+		this.boardPosition = boardPosition;
 	}
 
 	public List<ChessMove> getValidMoves()

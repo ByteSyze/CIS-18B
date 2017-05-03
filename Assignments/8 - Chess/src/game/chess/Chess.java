@@ -18,8 +18,10 @@ import game.chess.piece.BoundedPiece;
 import game.chess.piece.Rook;
 import game.chess.piece.ServantPiece;
 import game.chess.piece.SymmetricalPiece;
+import game.command.CaptureCommand;
+import game.command.MoveCommand;
+import game.command.ReversibleCommandQueue;
 import game.position.Position;
-import game.position.ScaledPosition;
 
 public class Chess extends Game2D
 {
@@ -33,6 +35,10 @@ public class Chess extends Game2D
 	
 	private float scale = 1f;
 	
+	private ReversibleCommandQueue commandQueue;
+	
+	private ChessPiece[][] board; 
+	
 	private ChessPlayer currentTurn;
 	
 	private ChessPlayer player1;
@@ -43,19 +49,21 @@ public class Chess extends Game2D
 	{
 		super();
 		
+		commandQueue = new ReversibleCommandQueue();
+		
 		currentTurn = player1;
 		
 		this.setMinimumSize(new Dimension(300,300));
 		this.setPreferredSize(this.getMinimumSize());
 	}
 	
-	public void update()
+	public void fireUpdate()
 	{
-		super.update();
+		super.fireUpdate();
 		
 		for(GameComponent c : components)
 		{
-			c.fixedUpdate(this);
+			c.update(this);
 		}
 	}
 
@@ -125,6 +133,8 @@ public class Chess extends Game2D
 	@Override
 	protected List<GameComponent> initializeGameComponents()
 	{
+		board = new ChessPiece[8][8];
+		
 		List<GameComponent> chessPieces = new ArrayList<GameComponent>();
 
 		addsome(chessPieces);
@@ -141,6 +151,7 @@ public class Chess extends Game2D
 		player1.setKing(k);
 		player1.addAlivePiece(k);
 		chessPieces.add(k);
+		this.setPieceAt(k.getBoardPosition(), k);
 		
 		ChessPiece knight = new Knight(player1, new Position(1,0));
 		knight = new SymmetricalPiece(knight);
@@ -149,6 +160,7 @@ public class Chess extends Game2D
 		
 		player1.addAlivePiece(knight);
 		chessPieces.add(knight);
+		this.setPieceAt(knight.getBoardPosition(), knight);
 		
 		ChessPiece rook = new Rook(player1, new Position(0,0));
 		rook = new SymmetricalPiece(rook);
@@ -157,6 +169,7 @@ public class Chess extends Game2D
 		
 		player1.addAlivePiece(rook);
 		chessPieces.add(rook);
+		this.setPieceAt(rook.getBoardPosition(), rook);
 		
 		ChessPiece k2 = new King(player2, new Position(4,7));
 		k2 = new SymmetricalPiece(k2);
@@ -165,6 +178,7 @@ public class Chess extends Game2D
 		player2.setKing(k2);
 		player2.addAlivePiece(k2);
 		chessPieces.add(k2);
+		this.setPieceAt(k2.getBoardPosition(), k2);
 		
 		ChessPiece knight2 = new Knight(player2, new Position(6,7));
 		knight2 = new SymmetricalPiece(knight2);
@@ -173,6 +187,7 @@ public class Chess extends Game2D
 		
 		player2.addAlivePiece(knight2);
 		chessPieces.add(knight2);
+		this.setPieceAt(knight2.getBoardPosition(), knight2);
 		
 		ChessPiece rook2 = new Rook(player2, new Position(7,7));
 		rook2 = new SymmetricalPiece(rook2);
@@ -181,6 +196,33 @@ public class Chess extends Game2D
 		
 		player2.addAlivePiece(rook2);
 		chessPieces.add(rook2);
+		this.setPieceAt(rook2.getBoardPosition(), rook2);
+	}
+	
+	public ChessPiece[][] getBoard()
+	{
+		return board;
+	}
+	
+	/**
+	 * Returns the ChessPiece at the specified location on the chess board.
+	 * 
+	 * @return the ChessPiece at {@code boardPosition}, or null if no ChessPiece is at that location.
+	 * */
+	public ChessPiece getPieceAt(Position boardPosition)
+	{
+		return board[(int)boardPosition.getX()][(int)boardPosition.getY()];
+	}
+	
+	/**
+	 * Sets the ChessPiece at the specified location of the chess board.
+	 * 
+	 * @param boardPosition the position on the chess board to place the ChessPiece
+	 * @param piece the ChessPiece to be set
+	 * */
+	public void setPieceAt(Position boardPosition, ChessPiece piece)
+	{
+		board[(int)boardPosition.getX()][(int)boardPosition.getY()] = piece;
 	}
 	
 	public ChessPlayer getCurrentTurn()
@@ -248,10 +290,32 @@ public class Chess extends Game2D
 						
 						if(optionBounds.contains(e.getPoint()))
 						{
-							selectedPiece.getBoardPosition().move(dependentMove);
+							ChessPlayer opponent = (currentTurn == player1) ? player2 : player1;
+							ChessPiece captured = null;
+							
+							for(ChessPiece p : opponent.getAlivePieces())
+							{
+								if(p.getBoardPosition().equals(Position.add(selectedPiece.getBoardPosition(), dependentMove)))
+								{
+									captured = p;
+									break;
+								}
+							}
+							
+							if(captured != null)
+							{
+								commandQueue.add(new CaptureCommand(this, selectedPiece, captured));
+							}
+							else
+							{
+								commandQueue.add(new MoveCommand(this, selectedPiece, dependentMove));
+							}
+
+							commandQueue.executeNextCommand();
+							
 							selectedObject = null;
 							
-							currentTurn = currentTurn == player1 ? player2 : player1;
+							currentTurn = (currentTurn == player1) ? player2 : player1;
 							
 							player1.onTurn(this);
 							player2.onTurn(this);

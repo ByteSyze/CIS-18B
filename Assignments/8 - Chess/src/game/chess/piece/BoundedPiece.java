@@ -35,90 +35,54 @@ public class BoundedPiece extends ChessPieceFeature
 	{
 		List<ChessMove> outOfBounds = new ArrayList<ChessMove>();
 		
-		Position anchor = chessPiece.getBoardPosition();
 		Position moveBoardPos;
 		
-		for(ChessMove move: moves)
+		for(ChessMove move : moves)
 		{
-			ChessMove moveChain = move;
-			ChessMove previousChain = null;
-			
-			while(moveChain != null)
+			for(ChessMove chain : move.asList())
 			{
-				moveBoardPos = Position.add(anchor, moveChain);
+				moveBoardPos = Position.add(chessPiece.getBoardPosition(), chain);
 				
 				if((moveBoardPos.getX() > 7) || (moveBoardPos.getY() > 7) ||
 						(moveBoardPos.getX() < 0) || (moveBoardPos.getY() < 0))
 				{
-					if(moveChain == move)
+					if(chain == move)
 						outOfBounds.add(move);
 					else
-						previousChain.setNextMove(null);
+						chain.getPreviousMove().setNextMove(null);
 				}
-				
-				previousChain = moveChain;
-				moveChain = moveChain.getNextMove();
-				
 			}
 		}
 		
-		for(ChessMove invalid : outOfBounds)
-		{
-			moves.remove(invalid);
-		}
+		moves.removeAll(outOfBounds);
 	}
 	
 	private void filterBlockedMoves(List<ChessMove> moves, List<ChessPiece> pieces)
 	{
 		List<ChessMove> invalidRootMoves = new ArrayList<ChessMove>();
+		ChessPiece hit;
 		
-		Position anchor = chessPiece.getBoardPosition();
-		
-		//TODO optimize this
 		for(ChessMove move : moves)
 		{
-			for(ChessPiece p : pieces)
+			for(ChessMove chain : move.asList())
 			{
-				ChessMove moveChain = move;
-				ChessMove previousInChain = move;
+				hit = chess.getPieceAt(Position.add(chessPiece.getBoardPosition(), chain));
 				
-				boolean blocked = false;
-				
-				while(moveChain != null)
+				if(hit != null)
 				{
-					if(Position.add(moveChain, anchor).equals(p.getBoardPosition()))
-					{
-						if(p.getOwner() == chessPiece.getOwner())
-						{
-							if(moveChain == move)
-								invalidRootMoves.add(moveChain);
-							else
-								previousInChain.setNextMove(null);
-						}
-						else
-						{
-							moveChain.setNextMove(null);
-						}
-						
-						blocked = true;
-						
-						break;
-					}
+					boolean sameOwner = (hit.getOwner() == chessPiece.getOwner());
 					
-					previousInChain = moveChain;
-					moveChain = moveChain.getNextMove();
-				}
-				
-				if(blocked)
-				{
-					break;
+					if(chain == move && sameOwner)
+						invalidRootMoves.add(move);
+					else if(sameOwner)
+						chain.getPreviousMove().setNextMove(null);
+					else
+						chain.setNextMove(null);
 				}
 			}
 		}
 		
-		for(ChessMove invalid : invalidRootMoves)
-			moves.remove(invalid);
-		
+		moves.removeAll(invalidRootMoves);
 	}
 
 }

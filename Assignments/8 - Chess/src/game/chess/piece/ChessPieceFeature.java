@@ -19,9 +19,9 @@ public abstract class ChessPieceFeature extends ChessPiece
 		this.chessPiece = piece;
 	}
 	
-	public void fixedUpdate(Game2D game)
+	public void update(Game2D game)
 	{
-		chessPiece.fixedUpdate(game);
+		chessPiece.update(game);
 	}
 	
 	public void update(Chess chess)
@@ -57,6 +57,11 @@ public abstract class ChessPieceFeature extends ChessPiece
 	public Position getBoardPosition()
 	{
 		return chessPiece.getBoardPosition();
+	}
+	
+	public void setBoardPosition(Position boardPosition)
+	{
+		chessPiece.setBoardPosition(boardPosition);
 	}
 	
 	public float getComponentHeight()

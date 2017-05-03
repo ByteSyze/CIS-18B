@@ -11,6 +11,8 @@ public interface GameObject extends GameComponent
 	
 	public void highlight(Graphics2D g);
 	
+	public boolean isActive();
+	
 	public Position getPosition();
 	
 	public Shape getBounds();

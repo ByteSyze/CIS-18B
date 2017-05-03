@@ -6,21 +6,16 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
 
-import game.command.CommandQueue;
-import game.command.ReversibleCommand;
 import game.position.Position;
 
 public abstract class Game2D extends JPanel implements MouseListener, MouseMotionListener
 {
 	private static final long serialVersionUID = -3072628509335710782L;
-	
-	protected CommandQueue<ReversibleCommand> chessCommandQueue;
 	
 	protected List<GameComponent> components;
 	
@@ -50,11 +45,11 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 		addMouseMotionListener(this);
 	}
 	
-	public void update()
+	protected void fireUpdate()
 	{
 		for(GameComponent c : components)
 		{
-			c.fixedUpdate(this);
+			c.update(this);
 		}
 	}
 	
@@ -62,7 +57,7 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 	{
 		super.paint(g);
 		
-		update();
+		fireUpdate();
 		
 		Graphics2D g2d = (Graphics2D)g;
 		
@@ -74,16 +69,19 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 		
 		for(GameObject obj : gameObjects)
 		{
-			cPos = obj.getPosition();
-			
-			int x = (int)(cPos.getX());
-			int y = (int)(cPos.getY());
-			int width = (int)(obj.getComponentWidth());
-			int height = (int)(obj.getComponentHeight());
-			
-			Graphics2D cg = (Graphics2D)g2d.create(x,y,width,height);
-			
-			obj.draw(cg);
+			if(obj.isActive())
+			{
+				cPos = obj.getPosition();
+				
+				int x = (int)(cPos.getX());
+				int y = (int)(cPos.getY());
+				int width = (int)(obj.getComponentWidth());
+				int height = (int)(obj.getComponentHeight());
+				
+				Graphics2D cg = (Graphics2D)g2d.create(x,y,width,height);
+				
+				obj.draw(cg);
+			}
 		}
 		
 		if(selectedObject != null)

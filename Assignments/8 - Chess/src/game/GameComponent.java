@@ -2,5 +2,5 @@ package game;
 
 public interface GameComponent 
 {
-	public void fixedUpdate(Game2D game);
+	public void update(Game2D game);
 }
