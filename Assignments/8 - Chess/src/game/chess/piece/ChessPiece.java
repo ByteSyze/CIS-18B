@@ -8,7 +8,6 @@ import java.util.List;
 
 import game.Game2D;
 import game.GameObject;
-import game.chess.Chess;
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
 import game.position.Position;
@@ -63,7 +62,6 @@ public abstract class ChessPiece implements GameObject
 		}
 		
 		bounds.setRect(position.getX()*game.getXScale(), position.getY()*game.getYScale(), getComponentWidth()*game.getXScale(), getComponentHeight()*game.getYScale());
-		update((Chess)game);
 	}
 	
 	public ChessPlayer getOwner()
@@ -136,8 +134,6 @@ public abstract class ChessPiece implements GameObject
 	{
 		return new ChessMove(x, y);
 	}
-	
-	public abstract void update(Chess chess);
 	
 	/**
 	 * Returns all of the moves this chess piece can make in the first Quadrant.

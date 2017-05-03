@@ -2,11 +2,7 @@ package game.chess.piece;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import game.chess.Chess;
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
 import game.chess.piece.ChessModels.Type;
@@ -47,12 +43,6 @@ public class Knight extends ChessPiece
 	public float getComponentWidth()
 	{
 		return 50;
-	}
-
-	@Override
-	public void update(Chess chess)
-	{
-		
 	}
 
 	@Override
