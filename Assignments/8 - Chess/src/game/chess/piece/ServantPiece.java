@@ -21,9 +21,16 @@ public class ServantPiece extends ChessPieceFeature
 	
 	public List<ChessMove> getValidMoves()
 	{	
+		if(useCachedMoves)
+		{
+			return cachedMoves;
+		}
 		if(chess.getCurrentTurn() != chessPiece.getOwner())
 		{
-			return chessPiece.getValidMoves();
+			cachedMoves = chessPiece.getValidMoves();
+			useCachedMoves = true;
+			
+			return cachedMoves;
 		}
 		
 		ChessPlayer opponent = null;
@@ -37,7 +44,7 @@ public class ServantPiece extends ChessPieceFeature
 		if(opponent.getValidMoveMap()[(int)kingPos.getX()][(int)kingPos.getY()] == 1)
 		{
 			List<ChessMove> oldValidMoves = chessPiece.getValidMoves();
-			List<ChessMove> validMoves = new ArrayList<ChessMove>();
+			cachedMoves = new ArrayList<ChessMove>();
 			
 			List<ChessPiece> targetEnemies = new ArrayList<ChessPiece>();
 			List<ChessMove> blockOptions = new ArrayList<ChessMove>(); //Board positions that can block the King.
@@ -87,7 +94,8 @@ public class ServantPiece extends ChessPieceFeature
 								{
 									chain.setPreviousMove(null);
 									chain.setNextMove(null);
-									validMoves.add(chain);
+									
+									cachedMoves.add(chain);
 								}
 							}
 						}
@@ -109,18 +117,21 @@ public class ServantPiece extends ChessPieceFeature
 							if(Position.add(chessPiece.getBoardPosition(), chain).equals(target.getBoardPosition()))
 							{
 								chain.setNextMove(null);
-								validMoves.add(chain);
+								cachedMoves.add(chain);
 							}
 						}
 					}
 				}
 			}
 			
-			return validMoves;
+			useCachedMoves = true;
+			
+			return cachedMoves;
 		}
 		
-		return chessPiece.getValidMoves();
+		cachedMoves = chessPiece.getValidMoves();
+		useCachedMoves = true;
+		
+		return cachedMoves;
 	}
-
-	
 }

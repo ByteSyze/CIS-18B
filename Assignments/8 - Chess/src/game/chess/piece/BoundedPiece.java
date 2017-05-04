@@ -21,14 +21,38 @@ public class BoundedPiece extends ChessPieceFeature
 	@Override
 	public List<ChessMove> getValidMoves()
 	{
-		List<ChessMove> moves = chessPiece.getValidMoves();
+		if(useCachedMoves)
+			return cachedMoves;
+		
+		cachedMoves = chessPiece.getValidMoves();
 
-		filterLimits(moves);
+		filterLimits(cachedMoves);
 		
-		filterBlockedMoves(moves, chess.getPlayerOne().getAlivePieces());
-		filterBlockedMoves(moves, chess.getPlayerTwo().getAlivePieces());
+		filterBlockedMoves(cachedMoves, chess.getPlayerOne().getAlivePieces());
+		filterBlockedMoves(cachedMoves, chess.getPlayerTwo().getAlivePieces());
 		
-		return moves;
+		useCachedMoves = true;
+		
+		return cachedMoves;
+	}
+	
+	@Override
+	public List<ChessMove> getLookAheadMoves()
+	{
+		if(useCachedLookAhead)
+		{
+			return cachedLookAhead;
+		}
+		else
+		{
+			cachedLookAhead = chessPiece.getLookAheadMoves();
+			
+			filterLimits(cachedLookAhead);
+			
+			useCachedLookAhead = true;
+			
+			return cachedLookAhead;
+		}
 	}
 	
 	private void filterLimits(List<ChessMove> moves)

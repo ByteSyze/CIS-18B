@@ -2,6 +2,7 @@ package game.chess.piece;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.util.List;
 
 import game.Game2D;
 import game.chess.Chess;
@@ -42,6 +43,18 @@ public abstract class ChessPieceFeature extends ChessPiece
 	public ChessPlayer getOwner()
 	{
 		return chessPiece.getOwner();
+	}
+	
+	public void invalidateMoves()
+	{
+		super.invalidateMoves();
+		
+		chessPiece.invalidateMoves();
+	}
+	
+	public List<ChessMove> getLookAheadMoves()
+	{
+		return chessPiece.getLookAheadMoves();
 	}
 	
 	public Shape getBounds()

@@ -30,6 +30,8 @@ public class MoveCommand implements ReversibleCommand
 		chessPiece.getBoardPosition().move(move);
 		
 		chess.setPieceAt(chessPiece.getBoardPosition(), chessPiece);
+		
+		chess.invalidateMoves();
 	}
 
 	@Override
@@ -40,6 +42,8 @@ public class MoveCommand implements ReversibleCommand
 		chessPiece.getBoardPosition().move(reverseMove);
 		
 		chess.setPieceAt(chessPiece.getBoardPosition(), chessPiece);
+		
+		chess.invalidateMoves();
 	}
 
 }

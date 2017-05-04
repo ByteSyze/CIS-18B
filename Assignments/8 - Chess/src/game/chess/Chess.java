@@ -12,6 +12,7 @@ import game.Game2D;
 import game.GameComponent;
 import game.GameObject;
 import game.chess.piece.ChessPiece;
+import game.chess.piece.CowardPiece;
 import game.chess.piece.King;
 import game.chess.piece.Knight;
 import game.chess.piece.Bishop;
@@ -107,16 +108,12 @@ public class Chess extends Game2D
 			
 			for(ChessMove move : selectedPiece.getValidMoves())
 			{
-				ChessMove dependentMove = move;
-				
-				while(dependentMove != null)
+				for(ChessMove chain : move.asList())
 				{
-					moveX = (int)((anchor.getX()+dependentMove.getX())*cellSize)+offset;
-					moveY = (int)((anchor.getY()+dependentMove.getY())*cellSize)+offset;
+					moveX = (int)((anchor.getX()+chain.getX())*cellSize)+offset;
+					moveY = (int)((anchor.getY()+chain.getY())*cellSize)+offset;
 					
 					g.fillOval(moveX, moveY, 25, 25);
-					
-					dependentMove = dependentMove.getNextMove();
 				}
 			}
 		}
@@ -126,6 +123,7 @@ public class Chess extends Game2D
 	{
 		player1 = new ChessPlayer(1, Color.WHITE);
 		player2 = new ChessPlayer(2, Color.BLACK);
+		//player2 = new ChessAIPlayer(2, Color.BLACK);
 		
 		components.add(player1);
 		components.add(player2);
@@ -148,6 +146,7 @@ public class Chess extends Game2D
 		ChessPiece k = new King(player1, new Position(4,0));
 		k = new SymmetricalPiece(k);
 		k = new BoundedPiece(k, this);
+		k = new CowardPiece(k, this);
 		
 		player1.setKing(k);
 		player1.addAlivePiece(k);
@@ -184,6 +183,7 @@ public class Chess extends Game2D
 		ChessPiece k2 = new King(player2, new Position(4,7));
 		k2 = new SymmetricalPiece(k2);
 		k2 = new BoundedPiece(k2, this);
+		k2 = new CowardPiece(k2, this);
 		
 		player2.setKing(k2);
 		player2.addAlivePiece(k2);
@@ -212,6 +212,32 @@ public class Chess extends Game2D
 	public ChessPiece[][] getBoard()
 	{
 		return board;
+	}
+	
+	/**
+	 * Switches currentTurn to the next ChessPlayer and calls their onTurn() method.
+	 * */
+	public void fireTurnChangeEvent()
+	{
+		ChessPlayer lastTurn = currentTurn;
+		currentTurn = (currentTurn == player1) ? player2 : player1;
+		
+		lastTurn.generateValidMoveMap();
+		currentTurn.onTurn(this);
+	}
+	
+	public ReversibleCommandQueue getCommandQueue()
+	{
+		return commandQueue;
+	}
+	
+	/**
+	 * Invalidates all cached moves for both Chess players.
+	 * */
+	public void invalidateMoves()
+	{
+		player1.invalidateMoves();
+		player2.invalidateMoves();
 	}
 	
 	/**
@@ -325,10 +351,7 @@ public class Chess extends Game2D
 							
 							selectedObject = null;
 							
-							currentTurn = (currentTurn == player1) ? player2 : player1;
-							
-							player1.onTurn(this);
-							player2.onTurn(this);
+							fireTurnChangeEvent();
 							
 							moved = true;
 							
@@ -354,7 +377,11 @@ public class Chess extends Game2D
 				{
 					if(obj instanceof ChessPiece)
 					{
-						if(((ChessPiece)obj).getOwner() != currentTurn)
+						if(!((ChessPiece)obj).isActive())
+						{
+							continue;
+						}
+						else if(((ChessPiece)obj).getOwner() != currentTurn)
 						{
 							return;
 						}

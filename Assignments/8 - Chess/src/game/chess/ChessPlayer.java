@@ -39,6 +39,17 @@ public class ChessPlayer extends TurnBasedPlayer
 		generateValidMoveMap();
 	}
 	
+	/**
+	 * Invalidates all cached moves for all of this player's alive chess pieces.
+	 * */
+	public void invalidateMoves()
+	{
+		for(ChessPiece p : alivePieces)
+		{
+			p.invalidateMoves();
+		}
+	}
+	
 	public void generateValidMoveMap()
 	{
 		validMoveMap = new int[8][8];
@@ -50,6 +61,7 @@ public class ChessPlayer extends TurnBasedPlayer
 				for(ChessMove chain : move.asList())
 				{
 					Position chainPos = Position.add(p.getBoardPosition(), chain);
+					
 					validMoveMap[(int)chainPos.getX()][(int)chainPos.getY()] = 1;
 				}
 			}

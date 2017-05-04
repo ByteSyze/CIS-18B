@@ -26,6 +26,12 @@ public abstract class ChessPiece implements GameObject
 	
 	private boolean isCaptured;
 	
+	protected List<ChessMove> cachedLookAhead;
+	protected List<ChessMove> cachedMoves;
+	
+	protected boolean useCachedLookAhead;
+	protected boolean useCachedMoves;
+	
 	public ChessPiece(){}
 	
 	public ChessPiece(ChessPlayer owner, Position boardPosition)
@@ -33,6 +39,11 @@ public abstract class ChessPiece implements GameObject
 		this.owner = owner;
 		
 		this.isCaptured = false;
+		
+		this.cachedLookAhead = new ArrayList<ChessMove>();
+		this.cachedMoves = new ArrayList<ChessMove>();
+		
+		this.useCachedMoves = false;
 		
 		this.boardPosition = boardPosition;
 		this.position = new ScaledPosition(boardPosition);
@@ -106,18 +117,72 @@ public abstract class ChessPiece implements GameObject
 	{
 		this.boardPosition = boardPosition;
 	}
+	
+	/**
+	 * Invalidates any cached valid moves for this piece. A subsequent call to {@link ChessPiece#getValidMoves() getValidMoves()}
+	 * must recalculate valid moves at least once.
+	 * */
+	public void invalidateMoves()
+	{
+		useCachedLookAhead = false;
+		useCachedMoves = false;
+	}
 
+	/**
+	 * Returns a list of valid moves for this ChessPiece.
+	 * 
+	 * At the concrete ChessPiece level, this simply returns the basic path the ChessPiece
+	 * can move in for the first Quadrant. Decorators are then used to filter out invalid moves
+	 * based on the current state of the game.
+	 * */
 	public List<ChessMove> getValidMoves()
 	{
-		ChessMove[] basicMoves = getBasicMoves();
-		ChessMove[] basicMovesClone = new ChessMove[basicMoves.length];
-		
-		for(int i = 0; i < basicMoves.length; i++)
+		if(useCachedMoves)
 		{
-			basicMovesClone[i] = basicMoves[i].clone();
+			return cachedMoves;
 		}
-		
-		return new ArrayList<ChessMove>(Arrays.asList(basicMovesClone));
+		else
+		{
+			ChessMove[] basicMoves = getBasicMoves();
+			ChessMove[] basicMovesClone = new ChessMove[basicMoves.length];
+			
+			for(int i = 0; i < basicMoves.length; i++)
+			{
+				basicMovesClone[i] = basicMoves[i].clone();
+			}
+			
+			cachedMoves = new ArrayList<ChessMove>(Arrays.asList(basicMovesClone));
+			useCachedMoves = true;
+			
+			return cachedMoves;
+		}
+	}
+	
+	/**
+	 * Returns all moves this ChessPiece can make, but does not invalidate moves
+	 * that pass through enemy pieces. This is useful for looking ahead in the game.
+	 * */
+	public List<ChessMove> getLookAheadMoves()
+	{
+		if(useCachedLookAhead)
+		{
+			return cachedLookAhead;
+		}
+		else
+		{
+			ChessMove[] basicMoves = getBasicMoves();
+			ChessMove[] basicMovesClone = new ChessMove[basicMoves.length];
+			
+			for(int i = 0; i < basicMoves.length; i++)
+			{
+				basicMovesClone[i] = basicMoves[i].clone();
+			}
+			
+			cachedLookAhead = new ArrayList<ChessMove>(Arrays.asList(basicMovesClone));
+			useCachedLookAhead = true;
+			
+			return cachedLookAhead;
+		}
 	}
 	
 	protected final static ChessMove cmove(int x, int y, ChessMove move)
@@ -138,6 +203,6 @@ public abstract class ChessPiece implements GameObject
 	/**
 	 * Returns all of the moves this chess piece can make in the first Quadrant.
 	 * */
-	public abstract ChessMove[] getBasicMoves();
+	protected abstract ChessMove[] getBasicMoves();
 
 }

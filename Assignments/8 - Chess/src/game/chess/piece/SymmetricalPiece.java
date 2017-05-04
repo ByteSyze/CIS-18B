@@ -16,7 +16,31 @@ public class SymmetricalPiece extends ChessPieceFeature
 	@Override
 	public List<ChessMove> getValidMoves()
 	{
-		List<ChessMove> simpleMoves = chessPiece.getValidMoves();
+		if(useCachedMoves)
+			return cachedMoves;
+		
+		cachedMoves = symmetrize(chessPiece.getValidMoves());
+		useCachedMoves = true;
+		
+		return cachedMoves;
+	}
+	
+	public List<ChessMove> getLookAheadMoves()
+	{
+		if(useCachedLookAhead)
+			return cachedLookAhead;
+		
+		cachedLookAhead = symmetrize(chessPiece.getLookAheadMoves());
+		useCachedLookAhead = true;
+			
+		return cachedLookAhead;
+	}
+	
+	/**
+	 * Did you know symmetrize is a word?????
+	 * */
+	private List<ChessMove> symmetrize(List<ChessMove> simpleMoves)
+	{
 		List<ChessMove> moves = new ArrayList<ChessMove>();
 		
 		for(ChessMove move : simpleMoves)
