@@ -1,39 +1,20 @@
-package game.chess.piece;
+package game.chess.piece.path;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import game.chess.ChessMove;
 
-public class SymmetricalPiece extends ChessPieceFeature
+public class SymmetricalPath extends PathFilter
 {
-
-	public SymmetricalPiece(ChessPiece piece) 
+	public SymmetricalPath(ChessPath path) 
 	{
-		super(piece);
+		super(path);
 	}
 	
-	@Override
-	public List<ChessMove> getValidMoves()
+	public List<ChessMove> generateValidPath()
 	{
-		if(useCachedMoves)
-			return cachedMoves;
-		
-		cachedMoves = symmetrize(chessPiece.getValidMoves());
-		useCachedMoves = true;
-		
-		return cachedMoves;
-	}
-	
-	public List<ChessMove> getLookAheadMoves()
-	{
-		if(useCachedLookAhead)
-			return cachedLookAhead;
-		
-		cachedLookAhead = symmetrize(chessPiece.getLookAheadMoves());
-		useCachedLookAhead = true;
-			
-		return cachedLookAhead;
+		return symmetrize(super.generateValidPath());
 	}
 	
 	/**

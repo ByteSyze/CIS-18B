@@ -1,50 +1,42 @@
-package game.chess.piece;
+package game.chess.piece.path;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import game.chess.Chess;
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
+import game.chess.piece.ChessPiece;
 import game.position.Position;
 
-public class ServantPiece extends ChessPieceFeature
+/**
+ * Filters ChessMoves that don't save the King when necessary.
+ * */
+public class ServantPath extends PathFilter
 {
-	private Chess chess;
-	
-	public ServantPiece(ChessPiece piece, Chess chess) 
+	public ServantPath(ChessPath path)
 	{
-		super(piece);
-		
-		this.chess = chess;
+		super(path);
 	}
 	
-	public List<ChessMove> getValidMoves()
+	public List<ChessMove> generateValidMoves()
 	{	
-		if(useCachedMoves)
+		if(getChess().getCurrentTurn() != getPiece().getOwner())
 		{
-			return cachedMoves;
-		}
-		if(chess.getCurrentTurn() != chessPiece.getOwner())
-		{
-			cachedMoves = chessPiece.getValidMoves();
-			useCachedMoves = true;
-			
-			return cachedMoves;
+			return super.generateValidPath();
 		}
 		
 		ChessPlayer opponent = null;
-		Position kingPos = chessPiece.getOwner().getKing().getBoardPosition();
+		Position kingPos = getPiece().getOwner().getKing().getBoardPosition();
 
-		if(chessPiece.getOwner() == chess.getPlayerOne())
-			opponent = chess.getPlayerTwo();
+		if(getPiece().getOwner() == getChess().getPlayerOne())
+			opponent = getChess().getPlayerTwo();
 		else
-			opponent = chess.getPlayerOne();
+			opponent = getChess().getPlayerOne();
 		
 		if(opponent.getValidMoveMap()[(int)kingPos.getX()][(int)kingPos.getY()] == 1)
 		{
-			List<ChessMove> oldValidMoves = chessPiece.getValidMoves();
-			cachedMoves = new ArrayList<ChessMove>();
+			List<ChessMove> oldValidMoves = getPiece().getValidMoves();
+			List<ChessMove> validMoves = new ArrayList<ChessMove>();
 			
 			List<ChessPiece> targetEnemies = new ArrayList<ChessPiece>();
 			List<ChessMove> blockOptions = new ArrayList<ChessMove>(); //Board positions that can block the King.
@@ -82,7 +74,7 @@ public class ServantPiece extends ChessPieceFeature
 				{
 					for(ChessMove chain : move.asList())
 					{
-						Position chainPos = Position.add(getBoardPosition(), chain);
+						Position chainPos = Position.add(getPiece().getBoardPosition(), chain);
 						
 						for(ChessMove blockOption : blockOptions)
 						{
@@ -95,7 +87,7 @@ public class ServantPiece extends ChessPieceFeature
 									chain.setPreviousMove(null);
 									chain.setNextMove(null);
 									
-									cachedMoves.add(chain);
+									validMoves.add(chain);
 								}
 							}
 						}
@@ -114,24 +106,20 @@ public class ServantPiece extends ChessPieceFeature
 					{
 						for(ChessMove chain : move.asList())
 						{
-							if(Position.add(chessPiece.getBoardPosition(), chain).equals(target.getBoardPosition()))
+							if(Position.add(getPiece().getBoardPosition(), chain).equals(target.getBoardPosition()))
 							{
 								chain.setNextMove(null);
-								cachedMoves.add(chain);
+								validMoves.add(chain);
 							}
 						}
 					}
 				}
 			}
 			
-			useCachedMoves = true;
-			
-			return cachedMoves;
+			return validMoves;
 		}
 		
-		cachedMoves = chessPiece.getValidMoves();
-		useCachedMoves = true;
-		
-		return cachedMoves;
+		return super.generateValidPath();
 	}
+
 }

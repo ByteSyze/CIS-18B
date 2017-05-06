@@ -9,11 +9,10 @@ import game.position.Position;
 
 public class Bishop extends ChessPiece
 {
-	ChessMove[] BISHOP_MOVES = { cmove(1,1,cmove(2,2,cmove(3,3,cmove(4,4,cmove(5,5,cmove(6,6,cmove(7,7))))))) };
 	
 	public Bishop(ChessPlayer owner, Position boardPosition)
 	{
-		super(owner, boardPosition);
+		super(owner, boardPosition, Type.BISHOP);
 	}
 
 	@Override
@@ -42,11 +41,4 @@ public class Bishop extends ChessPiece
 	{
 		return 50;
 	}
-
-	@Override
-	public ChessMove[] getBasicMoves()
-	{
-		return BISHOP_MOVES;
-	}
-
 }

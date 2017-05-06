@@ -3,19 +3,34 @@ package game.chess.piece;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import game.Game2D;
 import game.GameObject;
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
+import game.chess.piece.path.CachedPath;
+import game.chess.piece.path.ChessPath;
 import game.position.Position;
 import game.position.ScaledPosition;
 
 public abstract class ChessPiece implements GameObject
 {
+	public enum Type
+	{
+		PAWN,
+		BISHOP,
+		KNIGHT,
+		ROOK,
+		QUEEN,
+		KING
+	}
+	
 	private static final float POSITION_SNAP_THRESH = 0.5f;
+	
+	private CachedPath cachedPath;
+	
+	private Type type;
 	
 	private ScaledPosition position;
 	private Position boardPosition;
@@ -26,24 +41,17 @@ public abstract class ChessPiece implements GameObject
 	
 	private boolean isCaptured;
 	
-	protected List<ChessMove> cachedLookAhead;
-	protected List<ChessMove> cachedMoves;
-	
-	protected boolean useCachedLookAhead;
-	protected boolean useCachedMoves;
-	
 	public ChessPiece(){}
 	
-	public ChessPiece(ChessPlayer owner, Position boardPosition)
+	public ChessPiece(ChessPlayer owner, Position boardPosition, Type type)
 	{
 		this.owner = owner;
 		
+		this.type = type;
+		
 		this.isCaptured = false;
 		
-		this.cachedLookAhead = new ArrayList<ChessMove>();
-		this.cachedMoves = new ArrayList<ChessMove>();
-		
-		this.useCachedMoves = false;
+		this.cachedPath = new CachedPath();
 		
 		this.boardPosition = boardPosition;
 		this.position = new ScaledPosition(boardPosition);
@@ -75,9 +83,19 @@ public abstract class ChessPiece implements GameObject
 		bounds.setRect(position.getX()*game.getXScale(), position.getY()*game.getYScale(), getComponentWidth()*game.getXScale(), getComponentHeight()*game.getYScale());
 	}
 	
+	public void setPath(ChessPath path)
+	{
+		this.cachedPath.setPath(path);
+	}
+	
 	public ChessPlayer getOwner()
 	{
 		return owner;
+	}
+	
+	public Type getType()
+	{
+		return type;
 	}
 	
 	public Shape getBounds()
@@ -124,38 +142,15 @@ public abstract class ChessPiece implements GameObject
 	 * */
 	public void invalidateMoves()
 	{
-		useCachedLookAhead = false;
-		useCachedMoves = false;
+		cachedPath.invalidate();
 	}
 
 	/**
 	 * Returns a list of valid moves for this ChessPiece.
-	 * 
-	 * At the concrete ChessPiece level, this simply returns the basic path the ChessPiece
-	 * can move in for the first Quadrant. Decorators are then used to filter out invalid moves
-	 * based on the current state of the game.
 	 * */
 	public List<ChessMove> getValidMoves()
 	{
-		if(useCachedMoves)
-		{
-			return cachedMoves;
-		}
-		else
-		{
-			ChessMove[] basicMoves = getBasicMoves();
-			ChessMove[] basicMovesClone = new ChessMove[basicMoves.length];
-			
-			for(int i = 0; i < basicMoves.length; i++)
-			{
-				basicMovesClone[i] = basicMoves[i].clone();
-			}
-			
-			cachedMoves = new ArrayList<ChessMove>(Arrays.asList(basicMovesClone));
-			useCachedMoves = true;
-			
-			return cachedMoves;
-		}
+		return cachedPath.getValidPath();
 	}
 	
 	/**
@@ -164,25 +159,7 @@ public abstract class ChessPiece implements GameObject
 	 * */
 	public List<ChessMove> getLookAheadMoves()
 	{
-		if(useCachedLookAhead)
-		{
-			return cachedLookAhead;
-		}
-		else
-		{
-			ChessMove[] basicMoves = getBasicMoves();
-			ChessMove[] basicMovesClone = new ChessMove[basicMoves.length];
-			
-			for(int i = 0; i < basicMoves.length; i++)
-			{
-				basicMovesClone[i] = basicMoves[i].clone();
-			}
-			
-			cachedLookAhead = new ArrayList<ChessMove>(Arrays.asList(basicMovesClone));
-			useCachedLookAhead = true;
-			
-			return cachedLookAhead;
-		}
+		return cachedPath.getPredictivePath();
 	}
 	
 	protected final static ChessMove cmove(int x, int y, ChessMove move)
@@ -199,10 +176,4 @@ public abstract class ChessPiece implements GameObject
 	{
 		return new ChessMove(x, y);
 	}
-	
-	/**
-	 * Returns all of the moves this chess piece can make in the first Quadrant.
-	 * */
-	protected abstract ChessMove[] getBasicMoves();
-
 }

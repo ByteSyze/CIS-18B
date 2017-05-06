@@ -3,18 +3,8 @@ package game.chess.piece;
 import java.awt.Polygon;
 
 class ChessModels 
-{
-	public enum Type
-	{
-		KING,
-		QUEEN,
-		ROOK,
-		KNIGHT,
-		BISHOP,
-		PAWN
-	}
-	
-	public static ChessModels.Model create(ChessModels.Type type)
+{	
+	public static ChessModels.Model create(ChessPiece.Type type)
 	{
 		switch(type)
 		{

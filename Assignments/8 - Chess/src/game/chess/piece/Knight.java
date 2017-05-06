@@ -5,18 +5,16 @@ import java.awt.Graphics2D;
 
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
-import game.chess.piece.ChessModels.Type;
 import game.position.Position;
 
 
 public class Knight extends ChessPiece
 {
-	private static final ChessMove[] KNIGHT_MOVES = {cmove(1,2),cmove(2,1)};
 	private static final ChessModels.Model KNIGHT_MODEL = ChessModels.create(Type.KNIGHT);
 	
 	public Knight(ChessPlayer owner, Position boardPosition)
 	{
-		super(owner, boardPosition);
+		super(owner, boardPosition, Type.KNIGHT);
 	}
 
 	@Override
@@ -45,11 +43,4 @@ public class Knight extends ChessPiece
 	{
 		return 50;
 	}
-
-	@Override
-	public ChessMove[] getBasicMoves()
-	{
-		return KNIGHT_MOVES;
-	}
-
 }

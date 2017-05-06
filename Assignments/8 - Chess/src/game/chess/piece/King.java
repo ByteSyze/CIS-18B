@@ -9,17 +9,10 @@ import game.position.Position;
 
 public class King extends ChessPiece
 {
-	private static final ChessMove[] KING_MOVES = {cmove(0,1),cmove(1,1)};
 	
 	public King(ChessPlayer owner, Position boardPosition)
 	{
-		super(owner, boardPosition);
-	}
-
-	@Override
-	public ChessMove[] getBasicMoves() 
-	{
-		return KING_MOVES;
+		super(owner, boardPosition, Type.KING);
 	}
 
 	@Override

@@ -2,25 +2,37 @@ package game.chess.piece.path;
 
 import java.util.List;
 
+import game.chess.Chess;
 import game.chess.ChessMove;
+import game.chess.piece.ChessPiece;
 
-public abstract class PathFilter implements Path
+public abstract class PathFilter implements ChessPath
 {
-	private Path path;
+	private ChessPath path;
 	
-	public PathFilter(Path path)
+	public PathFilter(ChessPath path)
 	{
 		this.path = path;
 	}
 	
-	public List<ChessMove> getValidMoves()
+	public Chess getChess()
 	{
-		return path.getValidMoves();
+		return path.getChess();
 	}
 	
-	public List<ChessMove> getPredictiveMoves()
+	public ChessPiece getPiece()
 	{
-		return path.getPredictiveMoves();
+		return path.getPiece();
+	}
+	
+	public List<ChessMove> generateValidPath()
+	{
+		return path.generateValidPath();
+	}
+	
+	public List<ChessMove> generatePredictivePath()
+	{
+		return path.generatePredictivePath();
 	}
 	
 	public void invalidate()

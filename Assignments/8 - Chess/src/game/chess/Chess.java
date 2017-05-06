@@ -11,15 +11,13 @@ import java.util.List;
 import game.Game2D;
 import game.GameComponent;
 import game.GameObject;
-import game.chess.piece.ChessPiece;
-import game.chess.piece.CowardPiece;
-import game.chess.piece.King;
-import game.chess.piece.Knight;
-import game.chess.piece.Bishop;
-import game.chess.piece.BoundedPiece;
-import game.chess.piece.Rook;
-import game.chess.piece.ServantPiece;
-import game.chess.piece.SymmetricalPiece;
+import game.chess.piece.*;
+import game.chess.piece.path.BoundedPath;
+import game.chess.piece.path.ChessPath;
+import game.chess.piece.path.CowardPath;
+import game.chess.piece.path.ServantPath;
+import game.chess.piece.path.SimplePath;
+import game.chess.piece.path.SymmetricalPath;
 import game.command.CaptureCommand;
 import game.command.MoveCommand;
 import game.command.ReversibleCommandQueue;
@@ -144,9 +142,11 @@ public class Chess extends Game2D
 	private void addsome(List<GameComponent> chessPieces)
 	{
 		ChessPiece k = new King(player1, new Position(4,0));
-		k = new SymmetricalPiece(k);
-		k = new BoundedPiece(k, this);
-		k = new CowardPiece(k, this);
+		ChessPath kingPath = SimplePath.getSimplePath(this, k);
+		kingPath = new SymmetricalPath(kingPath);
+		kingPath = new BoundedPath(kingPath);
+		kingPath = new CowardPath(kingPath);
+		k.setPath(kingPath);
 		
 		player1.setKing(k);
 		player1.addAlivePiece(k);
@@ -154,36 +154,41 @@ public class Chess extends Game2D
 		this.setPieceAt(k.getBoardPosition(), k);
 		
 		ChessPiece knight = new Knight(player1, new Position(1,0));
-		knight = new SymmetricalPiece(knight);
-		knight = new BoundedPiece(knight, this);
-		knight = new ServantPiece(knight, this);
+		ChessPath knightPath = SimplePath.getSimplePath(this, knight);
+		knightPath = new SymmetricalPath(knightPath);
+		knightPath = new BoundedPath(knightPath);
+		knightPath = new CowardPath(knightPath);
+		knight.setPath(knightPath);
 		
 		player1.addAlivePiece(knight);
 		chessPieces.add(knight);
 		this.setPieceAt(knight.getBoardPosition(), knight);
 		
 		ChessPiece rook = new Rook(player1, new Position(0,0));
-		rook = new SymmetricalPiece(rook);
-		rook = new BoundedPiece(rook, this);
-		rook = new ServantPiece(rook, this);
+		ChessPath rookPath = SimplePath.getSimplePath(this, rook);
+		rookPath = new SymmetricalPath(rookPath);
+		rookPath = new BoundedPath(rookPath);
+		rookPath = new ServantPath(rookPath);
+		rook.setPath(rookPath);
 		
 		player1.addAlivePiece(rook);
 		chessPieces.add(rook);
 		this.setPieceAt(rook.getBoardPosition(), rook);
 		
 		ChessPiece bishop = new Bishop(player1, new Position(2,0));
-		bishop = new SymmetricalPiece(bishop);
-		bishop = new BoundedPiece(bishop, this);
-		bishop = new ServantPiece(bishop, this);
+		ChessPath bishopPath = SimplePath.getSimplePath(this, bishop);
+		bishopPath = new SymmetricalPath(bishopPath);
+		bishopPath = new BoundedPath(bishopPath);
+		bishop.setPath(bishopPath);
 		
 		player1.addAlivePiece(bishop);
 		chessPieces.add(bishop);
 		this.setPieceAt(bishop.getBoardPosition(), bishop);
 		
 		ChessPiece k2 = new King(player2, new Position(4,7));
-		k2 = new SymmetricalPiece(k2);
-		k2 = new BoundedPiece(k2, this);
-		k2 = new CowardPiece(k2, this);
+		ChessPath k2Path = SimplePath.getSimplePath(this, k2);
+		k2Path = new BoundedPath(k2Path);
+		k2.setPath(k2Path);
 		
 		player2.setKing(k2);
 		player2.addAlivePiece(k2);
@@ -191,18 +196,19 @@ public class Chess extends Game2D
 		this.setPieceAt(k2.getBoardPosition(), k2);
 		
 		ChessPiece knight2 = new Knight(player2, new Position(6,7));
-		knight2 = new SymmetricalPiece(knight2);
-		knight2 = new BoundedPiece(knight2, this);
-		knight2 = new ServantPiece(knight2, this);
+		ChessPath knight2Path = SimplePath.getSimplePath(this, knight2);
+		knight2Path = new SymmetricalPath(knight2Path);
+		knight2Path = new BoundedPath(knight2Path);
+		knight2.setPath(knight2Path);
 		
 		player2.addAlivePiece(knight2);
 		chessPieces.add(knight2);
 		this.setPieceAt(knight2.getBoardPosition(), knight2);
 		
 		ChessPiece rook2 = new Rook(player2, new Position(7,7));
-		rook2 = new SymmetricalPiece(rook2);
-		rook2 = new BoundedPiece(rook2, this);
-		rook2 = new ServantPiece(rook2, this);
+		ChessPath rook2Path = SimplePath.getSimplePath(this, rook2);
+		rook2Path = new BoundedPath(rook2Path);
+		rook2.setPath(rook2Path);
 		
 		player2.addAlivePiece(rook2);
 		chessPieces.add(rook2);

@@ -1,60 +1,44 @@
-package game.chess.piece;
+package game.chess.piece.path;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import game.chess.Chess;
 import game.chess.ChessMove;
+import game.chess.piece.ChessPiece;
 import game.position.Position;
 
-public class BoundedPiece extends ChessPieceFeature
+/**
+ * Filters out ChessMoves that go outside the bounds of the chess board,
+ * as well as moves that are blocked by other ChessPieces.
+ * */
+public class BoundedPath extends PathFilter
 {
-	private Chess chess;
-
-	public BoundedPiece(ChessPiece piece, Chess chess)
+	public BoundedPath(ChessPath path) 
 	{
-		super(piece);
-		
-		this.chess = chess;
-	}
-
-	@Override
-	public List<ChessMove> getValidMoves()
-	{
-		if(useCachedMoves)
-			return cachedMoves;
-		
-		cachedMoves = chessPiece.getValidMoves();
-
-		filterLimits(cachedMoves);
-		
-		filterBlockedMoves(cachedMoves, chess.getPlayerOne().getAlivePieces());
-		filterBlockedMoves(cachedMoves, chess.getPlayerTwo().getAlivePieces());
-		
-		useCachedMoves = true;
-		
-		return cachedMoves;
+		super(path);
 	}
 	
-	@Override
-	public List<ChessMove> getLookAheadMoves()
+	public List<ChessMove> generateValidPath()
 	{
-		if(useCachedLookAhead)
-		{
-			return cachedLookAhead;
-		}
-		else
-		{
-			cachedLookAhead = chessPiece.getLookAheadMoves();
-			
-			filterLimits(cachedLookAhead);
-			
-			useCachedLookAhead = true;
-			
-			return cachedLookAhead;
-		}
+		List<ChessMove> moves = super.generateValidPath();
+		
+		filterLimits(moves);
+		
+		filterBlockedMoves(moves, getChess().getPlayerOne().getAlivePieces());
+		filterBlockedMoves(moves, getChess().getPlayerTwo().getAlivePieces());
+		
+		return moves;
 	}
 	
+	public List<ChessMove> generatePredictivePath()
+	{
+		List<ChessMove> moves = super.generatePredictivePath();
+		
+		filterLimits(moves);
+		
+		return moves;
+	}
+
 	private void filterLimits(List<ChessMove> moves)
 	{
 		List<ChessMove> outOfBounds = new ArrayList<ChessMove>();
@@ -65,7 +49,7 @@ public class BoundedPiece extends ChessPieceFeature
 		{
 			for(ChessMove chain : move.asList())
 			{
-				moveBoardPos = Position.add(chessPiece.getBoardPosition(), chain);
+				moveBoardPos = Position.add(getPiece().getBoardPosition(), chain);
 				
 				if((moveBoardPos.getX() > 7) || (moveBoardPos.getY() > 7) ||
 						(moveBoardPos.getX() < 0) || (moveBoardPos.getY() < 0))
@@ -90,11 +74,11 @@ public class BoundedPiece extends ChessPieceFeature
 		{
 			for(ChessMove chain : move.asList())
 			{
-				hit = chess.getPieceAt(Position.add(chessPiece.getBoardPosition(), chain));
+				hit = getChess().getPieceAt(Position.add(getPiece().getBoardPosition(), chain));
 				
 				if(hit != null)
 				{
-					boolean sameOwner = (hit.getOwner() == chessPiece.getOwner());
+					boolean sameOwner = (hit.getOwner() == getPiece().getOwner());
 					
 					if(chain == move && sameOwner)
 						invalidRootMoves.add(move);
