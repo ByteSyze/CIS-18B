@@ -1,8 +1,9 @@
 package game.chess.piece;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.List;
 
 import game.Game2D;
@@ -14,34 +15,31 @@ import game.chess.piece.path.ChessPath;
 import game.position.Position;
 import game.position.ScaledPosition;
 
-public abstract class ChessPiece implements GameObject
+public class ChessPiece implements GameObject
 {
-	public enum Type
-	{
-		PAWN,
-		BISHOP,
-		KNIGHT,
-		ROOK,
-		QUEEN,
-		KING
-	}
+	public enum Type { PAWN, BISHOP, KNIGHT, ROOK, QUEEN, KING }
 	
 	private static final float POSITION_SNAP_THRESH = 0.5f;
 	
-	private CachedPath cachedPath;
+	private ChessModels.Model model;
 	
 	private Type type;
+	
+	private ChessPlayer owner;
+	
+	private CachedPath cachedPath;
 	
 	private ScaledPosition position;
 	private Position boardPosition;
 	
 	protected Rectangle2D bounds;
 	
-	private ChessPlayer owner;
-	
 	private boolean isCaptured;
 	
-	public ChessPiece(){}
+	public ChessPiece(Type type)
+	{
+		this.type = type;
+	}
 	
 	public ChessPiece(ChessPlayer owner, Position boardPosition, Type type)
 	{
@@ -50,6 +48,8 @@ public abstract class ChessPiece implements GameObject
 		this.type = type;
 		
 		this.isCaptured = false;
+		
+		this.model = ChessModels.create(type);
 		
 		this.cachedPath = new CachedPath();
 		
@@ -82,6 +82,19 @@ public abstract class ChessPiece implements GameObject
 		
 		bounds.setRect(position.getX()*game.getXScale(), position.getY()*game.getYScale(), getComponentWidth()*game.getXScale(), getComponentHeight()*game.getYScale());
 	}
+
+	public void draw(Graphics2D g) 
+	{
+		g.setColor(owner.getColor());
+		g.drawString(type.name(), 0, 25);
+		//g.fill(model);
+	}
+
+	public void highlight(Graphics2D g) 
+	{
+		g.setColor(Color.GREEN);
+		g.draw(model);
+	}
 	
 	public void setPath(ChessPath path)
 	{
@@ -91,6 +104,11 @@ public abstract class ChessPiece implements GameObject
 	public ChessPlayer getOwner()
 	{
 		return owner;
+	}
+	
+	public void setOwner(ChessPlayer owner)
+	{
+		this.owner = owner;
 	}
 	
 	public Type getType()
@@ -160,6 +178,16 @@ public abstract class ChessPiece implements GameObject
 	public List<ChessMove> getLookAheadMoves()
 	{
 		return cachedPath.getPredictivePath();
+	}
+	
+	public float getComponentHeight()
+	{
+		return 50f;
+	}
+
+	public float getComponentWidth() 
+	{
+		return 50f;
 	}
 	
 	protected final static ChessMove cmove(int x, int y, ChessMove move)

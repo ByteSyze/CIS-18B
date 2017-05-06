@@ -65,16 +65,16 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 		
 		draw(g2d);
 		
-		Position cPos;
+		Position currentPos;
 		
 		for(GameObject obj : gameObjects)
 		{
 			if(obj.isActive())
 			{
-				cPos = obj.getPosition();
+				currentPos = obj.getPosition();
 				
-				int x = (int)(cPos.getX());
-				int y = (int)(cPos.getY());
+				int x = (int)(currentPos.getX());
+				int y = (int)(currentPos.getY());
 				int width = (int)(obj.getComponentWidth());
 				int height = (int)(obj.getComponentHeight());
 				
@@ -86,10 +86,10 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 		
 		if(selectedObject != null)
 		{
-			cPos = selectedObject.getPosition();
+			currentPos = selectedObject.getPosition();
 			
-			int x = (int)(cPos.getX());
-			int y = (int)(cPos.getY());
+			int x = (int)(currentPos.getX());
+			int y = (int)(currentPos.getY());
 			int width = (int)Math.floor(selectedObject.getComponentWidth());
 			int height = (int)Math.floor(selectedObject.getComponentHeight());
 			

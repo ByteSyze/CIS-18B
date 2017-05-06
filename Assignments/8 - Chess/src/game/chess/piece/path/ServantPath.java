@@ -18,7 +18,7 @@ public class ServantPath extends PathFilter
 		super(path);
 	}
 	
-	public List<ChessMove> generateValidMoves()
+	public List<ChessMove> generateValidPath()
 	{	
 		if(getChess().getCurrentTurn() != getPiece().getOwner())
 		{

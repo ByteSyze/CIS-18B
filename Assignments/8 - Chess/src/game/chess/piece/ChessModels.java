@@ -40,6 +40,10 @@ class ChessModels
 	{
 			protected void createModel()
 			{
+				this.addPoint(0, 0);
+				this.addPoint(50, 0);
+				this.addPoint(50,50);
+				this.addPoint(0, 50);
 			}
 	}
 	

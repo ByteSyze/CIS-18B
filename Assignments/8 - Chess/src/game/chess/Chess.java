@@ -12,9 +12,11 @@ import game.Game2D;
 import game.GameComponent;
 import game.GameObject;
 import game.chess.piece.*;
+import game.chess.piece.ChessPiece.Type;
 import game.chess.piece.path.BoundedPath;
 import game.chess.piece.path.ChessPath;
 import game.chess.piece.path.CowardPath;
+import game.chess.piece.path.PathFactory;
 import game.chess.piece.path.ServantPath;
 import game.chess.piece.path.SimplePath;
 import game.chess.piece.path.SymmetricalPath;
@@ -134,85 +136,35 @@ public class Chess extends Game2D
 		
 		List<GameComponent> chessPieces = new ArrayList<GameComponent>();
 
-		addsome(chessPieces);
+		ChessPiece.Type[][] boardLayout = 
+			{{Type.ROOK, Type.KNIGHT, Type.BISHOP, Type.KING, Type.QUEEN, Type.BISHOP, Type.KNIGHT, Type.ROOK},
+			 {Type.PAWN, Type.PAWN,   Type.PAWN,   Type.PAWN, Type.PAWN,  Type.PAWN,   Type.PAWN,   Type.PAWN}};
+		
+		for(int i = 0; i < 8; i++)
+		{
+			for(int j = 0; j < 2; j++)
+			{
+				chessPieces.add(createPiece(player1, new Position(i,j), boardLayout[j][i]));
+				chessPieces.add(createPiece(player2, new Position(i,7-j), boardLayout[j][i]));
+			}
+		}
 		
 		return chessPieces;
 	}
-
-	private void addsome(List<GameComponent> chessPieces)
+	
+	private ChessPiece createPiece(ChessPlayer owner, Position boardPosition, ChessPiece.Type type)
 	{
-		ChessPiece k = new King(player1, new Position(4,0));
-		ChessPath kingPath = SimplePath.getSimplePath(this, k);
-		kingPath = new SymmetricalPath(kingPath);
-		kingPath = new BoundedPath(kingPath);
-		kingPath = new CowardPath(kingPath);
-		k.setPath(kingPath);
+		ChessPiece piece = new ChessPiece(owner, boardPosition, type);
 		
-		player1.setKing(k);
-		player1.addAlivePiece(k);
-		chessPieces.add(k);
-		this.setPieceAt(k.getBoardPosition(), k);
+		piece.setPath(PathFactory.createPath(this, piece));
 		
-		ChessPiece knight = new Knight(player1, new Position(1,0));
-		ChessPath knightPath = SimplePath.getSimplePath(this, knight);
-		knightPath = new SymmetricalPath(knightPath);
-		knightPath = new BoundedPath(knightPath);
-		knightPath = new CowardPath(knightPath);
-		knight.setPath(knightPath);
+		owner.addAlivePiece(piece);
+		this.setPieceAt(piece.getBoardPosition(), piece);
 		
-		player1.addAlivePiece(knight);
-		chessPieces.add(knight);
-		this.setPieceAt(knight.getBoardPosition(), knight);
+		if(type == Type.KING)
+			owner.setKing(piece);
 		
-		ChessPiece rook = new Rook(player1, new Position(0,0));
-		ChessPath rookPath = SimplePath.getSimplePath(this, rook);
-		rookPath = new SymmetricalPath(rookPath);
-		rookPath = new BoundedPath(rookPath);
-		rookPath = new ServantPath(rookPath);
-		rook.setPath(rookPath);
-		
-		player1.addAlivePiece(rook);
-		chessPieces.add(rook);
-		this.setPieceAt(rook.getBoardPosition(), rook);
-		
-		ChessPiece bishop = new Bishop(player1, new Position(2,0));
-		ChessPath bishopPath = SimplePath.getSimplePath(this, bishop);
-		bishopPath = new SymmetricalPath(bishopPath);
-		bishopPath = new BoundedPath(bishopPath);
-		bishop.setPath(bishopPath);
-		
-		player1.addAlivePiece(bishop);
-		chessPieces.add(bishop);
-		this.setPieceAt(bishop.getBoardPosition(), bishop);
-		
-		ChessPiece k2 = new King(player2, new Position(4,7));
-		ChessPath k2Path = SimplePath.getSimplePath(this, k2);
-		k2Path = new BoundedPath(k2Path);
-		k2.setPath(k2Path);
-		
-		player2.setKing(k2);
-		player2.addAlivePiece(k2);
-		chessPieces.add(k2);
-		this.setPieceAt(k2.getBoardPosition(), k2);
-		
-		ChessPiece knight2 = new Knight(player2, new Position(6,7));
-		ChessPath knight2Path = SimplePath.getSimplePath(this, knight2);
-		knight2Path = new SymmetricalPath(knight2Path);
-		knight2Path = new BoundedPath(knight2Path);
-		knight2.setPath(knight2Path);
-		
-		player2.addAlivePiece(knight2);
-		chessPieces.add(knight2);
-		this.setPieceAt(knight2.getBoardPosition(), knight2);
-		
-		ChessPiece rook2 = new Rook(player2, new Position(7,7));
-		ChessPath rook2Path = SimplePath.getSimplePath(this, rook2);
-		rook2Path = new BoundedPath(rook2Path);
-		rook2.setPath(rook2Path);
-		
-		player2.addAlivePiece(rook2);
-		chessPieces.add(rook2);
-		this.setPieceAt(rook2.getBoardPosition(), rook2);
+		return piece;
 	}
 	
 	public ChessPiece[][] getBoard()
