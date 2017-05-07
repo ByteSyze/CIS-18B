@@ -19,7 +19,7 @@ public class CowardPath extends PathFilter
 		super(path);
 	}
 	
-	public List<ChessMove> generateValidMoves()
+	public List<ChessMove> generateValidPath()
 	{
 		if(getChess().getCurrentTurn() != getPiece().getOwner())
 		{
@@ -34,7 +34,7 @@ public class CowardPath extends PathFilter
 		
 		for(ChessPiece enemy : opponent.getAlivePieces())
 		{
-			for(ChessMove enemyMove : enemy.getLookAheadMoves())
+			for(ChessMove enemyMove : enemy.getValidMoves())
 			{
 				for(ChessMove enemyChain : enemyMove.asList())
 				{

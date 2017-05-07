@@ -36,6 +36,9 @@ public class ChessPiece implements GameObject
 	
 	private boolean isCaptured;
 	
+	/**The number of times this ChessPiece has been moved.*/
+	private int moveCount = 0;
+	
 	public ChessPiece(Type type)
 	{
 		this.type = type;
@@ -54,6 +57,7 @@ public class ChessPiece implements GameObject
 		this.cachedPath = new CachedPath();
 		
 		this.boardPosition = boardPosition;
+		
 		this.position = new ScaledPosition(boardPosition);
 		
 		this.position.setScale(50f);
@@ -134,6 +138,25 @@ public class ChessPiece implements GameObject
 	public boolean isActive()
 	{
 		return !isCaptured();
+	}
+	
+	/**
+	 * Returns the number of times this ChessPiece has been moved.
+	 * */
+	public int getMoveCount()
+	{
+		return moveCount;
+	}
+	
+	/**
+	 * Moves this ChessPiece by {@code pos} relative to the ChessPiece's current position.
+	 * 
+	 * @param pos the relative change in position
+	 * */
+	public void move(Position pos)
+	{
+		moveCount++;
+		getBoardPosition().move(pos);
 	}
 	
 	/**

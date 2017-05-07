@@ -180,6 +180,8 @@ public class Chess extends Game2D
 		ChessPlayer lastTurn = currentTurn;
 		currentTurn = (currentTurn == player1) ? player2 : player1;
 		
+		currentTurn.invalidateMoves();
+		
 		lastTurn.generateValidMoveMap();
 		currentTurn.onTurn(this);
 	}

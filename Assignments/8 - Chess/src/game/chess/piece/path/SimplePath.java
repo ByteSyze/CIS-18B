@@ -115,6 +115,7 @@ public abstract class SimplePath implements ChessPath
 	
 	protected static class NaivePawnPath extends NaivePath
 	{
+		private static final ChessMove[] PAWN_FIRST_MOVES = { cmove(0,1,cmove(0,2)) };
 		private static final ChessMove[] PAWN_MOVES = { cmove(0,1) };
 		
 		public NaivePawnPath(Chess chess, ChessPiece piece)
@@ -124,7 +125,12 @@ public abstract class SimplePath implements ChessPath
 
 		protected ChessMove[] getNaiveMoves()
 		{
-			return PAWN_MOVES;
+			if(getPiece().getMoveCount() == 0)
+			{
+				return PAWN_FIRST_MOVES;
+			}
+			else
+				return PAWN_MOVES;
 		}
 	}
 	

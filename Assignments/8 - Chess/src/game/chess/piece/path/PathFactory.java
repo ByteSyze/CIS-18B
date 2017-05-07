@@ -12,6 +12,13 @@ public class PathFactory
 		
 		if(isSymmetrical(piece))
 			path = new SymmetricalPath(path);
+		else
+		{
+			if(piece.getOwner() == chess.getPlayerTwo())
+				path = new ReversePath(path);
+			
+			path = new PawnPath(path);
+		}
 		
 		path = new BoundedPath(path);
 		

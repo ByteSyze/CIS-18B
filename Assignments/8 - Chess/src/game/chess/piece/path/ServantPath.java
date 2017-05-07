@@ -35,7 +35,7 @@ public class ServantPath extends PathFilter
 		
 		if(opponent.getValidMoveMap()[(int)kingPos.getX()][(int)kingPos.getY()] == 1)
 		{
-			List<ChessMove> oldValidMoves = getPiece().getValidMoves();
+			List<ChessMove> oldValidMoves = super.generateValidPath();
 			List<ChessMove> validMoves = new ArrayList<ChessMove>();
 			
 			List<ChessPiece> targetEnemies = new ArrayList<ChessPiece>();
