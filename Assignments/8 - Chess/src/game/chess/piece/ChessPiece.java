@@ -90,8 +90,8 @@ public class ChessPiece implements GameObject
 	public void draw(Graphics2D g) 
 	{
 		g.setColor(owner.getColor());
-		g.drawString(type.name(), 0, 25);
-		//g.fill(model);
+		//g.drawString(type.name(), 0, 25);
+		g.fill(model);
 	}
 
 	public void highlight(Graphics2D g) 

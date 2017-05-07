@@ -9,7 +9,7 @@ import game.chess.piece.ChessPiece;
 import game.position.Position;
 
 /**
- * Filters ChessMoves that don't save the King when necessary.
+ * Filters ChessMoves that fail to save the King when necessary.
  * */
 public class ServantPath extends PathFilter
 {
@@ -38,7 +38,7 @@ public class ServantPath extends PathFilter
 			List<ChessMove> oldValidMoves = super.generateValidPath();
 			List<ChessMove> validMoves = new ArrayList<ChessMove>();
 			
-			List<ChessPiece> targetEnemies = new ArrayList<ChessPiece>();
+			List<ChessPiece> targetEnemies = new ArrayList<ChessPiece>(); //Enemy pieces that can reach the King.
 			List<ChessMove> blockOptions = new ArrayList<ChessMove>(); //Board positions that can block the King.
 			
 			boolean canBlockKing = true;

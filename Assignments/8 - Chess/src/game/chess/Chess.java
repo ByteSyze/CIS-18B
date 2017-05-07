@@ -3,23 +3,22 @@ package game.chess;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
+import java.awt.MultipleGradientPaint;
+import java.awt.Paint;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import game.Game2D;
 import game.GameComponent;
 import game.GameObject;
 import game.chess.piece.*;
 import game.chess.piece.ChessPiece.Type;
-import game.chess.piece.path.BoundedPath;
-import game.chess.piece.path.ChessPath;
-import game.chess.piece.path.CowardPath;
 import game.chess.piece.path.PathFactory;
-import game.chess.piece.path.ServantPath;
-import game.chess.piece.path.SimplePath;
-import game.chess.piece.path.SymmetricalPath;
 import game.command.CaptureCommand;
 import game.command.MoveCommand;
 import game.command.ReversibleCommandQueue;
@@ -31,7 +30,7 @@ public class Chess extends Game2D
 	
 	private static final String TITLE = "Chess";
 	
-	private final Color[] cellColors = {Color.GRAY, Color.DARK_GRAY};
+	private final Paint[] cellPaints = new Paint[2];
 	
 	private float cellSize = 50f;
 	
@@ -54,6 +53,32 @@ public class Chess extends Game2D
 		commandQueue = new ReversibleCommandQueue();
 		
 		currentTurn = player1;
+		
+		//
+		//Generate checkerboard textures
+		//
+		//Marble texture
+		Point2D start = new Point2D.Float(0, 0);
+		Point2D end = new Point2D.Float(5, 5);
+		float[] dist = {0.2f, 0.25f, 0.7f};
+		Color[] colors = {new Color(225, 199, 138),
+						  new Color(225, 199, 138),
+						  new Color(228, 201, 163)};
+		
+		LinearGradientPaint p = new LinearGradientPaint(start, end, dist, colors, MultipleGradientPaint.CycleMethod.REFLECT);
+		
+		cellPaints[0] = p;
+		
+		//Wood texture
+		end.setLocation(-end.getX(), end.getY());
+		
+		colors[0] = new Color(60, 25, 14);
+		colors[1] = new Color(103, 40, 28);
+		colors[2] = new Color(143, 50, 28);
+		
+		p = new LinearGradientPaint(start, end, dist, colors, MultipleGradientPaint.CycleMethod.REPEAT);
+		
+		cellPaints[1] = p;
 		
 		this.setMinimumSize(new Dimension(300,300));
 		this.setPreferredSize(this.getMinimumSize());
@@ -79,19 +104,24 @@ public class Chess extends Game2D
 		
 		int colorIdx = 0;
 		
+		Paint normalPaint = g.getPaint();
+		
 		for(int i = 0; i < 8; i++)
 		{
 			colorIdx++;
 			
 			for(int j = 0; j < 8; j++)
 			{
-				g.setColor(cellColors[colorIdx%cellColors.length]);
+				g.setPaint(cellPaints[colorIdx%cellPaints.length]);
+				//g.setColor(cellColors[colorIdx%cellColors.length]);
 				
 				g.fillRect((int)(i*cellSize), (int)(j*cellSize), (int)(cellSize), (int)(cellSize));
 				
 				colorIdx++;
 			}
 		}
+		
+		g.setPaint(normalPaint);
 	}
 	
 	public void drawOverlay(Graphics2D g)
