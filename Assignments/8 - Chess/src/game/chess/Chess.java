@@ -1,8 +1,10 @@
 package game.chess;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint;
 import java.awt.Paint;
@@ -11,16 +13,22 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
 
 import game.Game2D;
 import game.GameComponent;
 import game.GameObject;
+import game.chess.listener.CommandUndoListener;
 import game.chess.piece.*;
 import game.chess.piece.ChessPiece.Type;
 import game.chess.piece.path.PathFactory;
 import game.command.CaptureCommand;
 import game.command.MoveCommand;
+import game.command.PromoteCommand;
 import game.command.ReversibleCommandQueue;
 import game.position.Position;
 
@@ -46,6 +54,12 @@ public class Chess extends Game2D
 	
 	private ChessPlayer player2;
 	
+	//UI stuff
+	
+	private JList<String> moveList;
+	
+	private JButton undoButton, redoButton;
+	
 	public Chess()
 	{
 		super();
@@ -59,18 +73,18 @@ public class Chess extends Game2D
 		//
 		//Marble texture
 		Point2D start = new Point2D.Float(0, 0);
-		Point2D end = new Point2D.Float(5, 5);
+		Point2D end = new Point2D.Float(8, 10);
 		float[] dist = {0.2f, 0.25f, 0.7f};
 		Color[] colors = {new Color(225, 199, 138),
 						  new Color(225, 199, 138),
-						  new Color(228, 201, 163)};
+						  new Color(228, 221, 163)};
 		
 		LinearGradientPaint p = new LinearGradientPaint(start, end, dist, colors, MultipleGradientPaint.CycleMethod.REFLECT);
 		
 		cellPaints[0] = p;
 		
 		//Wood texture
-		end.setLocation(-end.getX(), end.getY());
+		end.setLocation(-5, 5);
 		
 		colors[0] = new Color(60, 25, 14);
 		colors[1] = new Color(103, 40, 28);
@@ -80,7 +94,7 @@ public class Chess extends Game2D
 		
 		cellPaints[1] = p;
 		
-		this.setMinimumSize(new Dimension(300,300));
+		this.setMinimumSize(new Dimension(740,480));
 		this.setPreferredSize(this.getMinimumSize());
 	}
 	
@@ -97,14 +111,15 @@ public class Chess extends Game2D
 	@Override
 	public void draw(Graphics2D g)
 	{
-		float smallestAxis = getHeight() < getWidth() ? getHeight() : getWidth();
-		scale = smallestAxis/400f;
+		//int gameWidth = (2*getWidth())/3;
+		int gameWidth = getWidth();
+		
+		float smallestAxis = getHeight() < gameWidth ? getHeight() : gameWidth;
+		scale = smallestAxis/(cellSize*8);
 		
 		g.scale(scale, scale);
 		
 		int colorIdx = 0;
-		
-		Paint normalPaint = g.getPaint();
 		
 		for(int i = 0; i < 8; i++)
 		{
@@ -120,8 +135,6 @@ public class Chess extends Game2D
 				colorIdx++;
 			}
 		}
-		
-		g.setPaint(normalPaint);
 	}
 	
 	public void drawOverlay(Graphics2D g)
@@ -149,6 +162,43 @@ public class Chess extends Game2D
 		}
 	}
 	
+	protected JPanel initializeWrapper()
+	{
+		JPanel wrapper = new JPanel();
+		
+		wrapper.setLayout(new BorderLayout());
+		
+		wrapper.add(this, BorderLayout.CENTER);
+		
+		JPanel buttonContainer = new JPanel();
+		
+		buttonContainer.setLayout(new GridLayout(1, 1));
+		
+		undoButton = new JButton("Undo Last Move");
+		redoButton = new JButton("Redo Last Move");
+		
+		CommandUndoListener undoListener = new CommandUndoListener(this);
+		
+		undoButton.addActionListener(undoListener);
+		redoButton.addActionListener(undoListener);
+		
+		buttonContainer.add(undoButton);
+		//buttonContainer.add(redoButton);
+		
+		wrapper.add(buttonContainer, BorderLayout.SOUTH);
+		
+		//DefaultListModel<String> model = new DefaultListModel<String>();
+		//moveList = new JList<String>(model);
+		
+		//moveList.setMaximumSize(new Dimension(300,300));
+		
+		//model.addElement("Hello World");
+		
+		//wrapper.add(moveList, BorderLayout.EAST);
+		
+		return wrapper;
+	}
+	
 	protected void initializePlayers()
 	{
 		player1 = new ChessPlayer(1, Color.WHITE);
@@ -159,7 +209,6 @@ public class Chess extends Game2D
 		components.add(player2);
 	}
 
-	@Override
 	protected List<GameComponent> initializeGameComponents()
 	{
 		board = new ChessPiece[8][8];
@@ -182,7 +231,14 @@ public class Chess extends Game2D
 		return chessPieces;
 	}
 	
-	private ChessPiece createPiece(ChessPlayer owner, Position boardPosition, ChessPiece.Type type)
+	/**
+	 * Creates a new ChessPiece with the given parameters.
+	 * 
+	 * @param	owner			the owner of the new ChessPiece
+	 * @param	boardPosition	the initial board position of the ChessPiece
+	 * @param	type			the type of ChessPiece to create
+	 * */
+	public ChessPiece createPiece(ChessPlayer owner, Position boardPosition, ChessPiece.Type type)
 	{
 		ChessPiece piece = new ChessPiece(owner, boardPosition, type);
 		
@@ -334,14 +390,26 @@ public class Chess extends Game2D
 							}
 							else
 							{
-								commandQueue.add(new MoveCommand(this, selectedPiece, dependentMove));
+								boolean doSimpleMove = true;
+								if(selectedPiece.getType() == Type.PAWN)
+								{
+									if(selectedPiece.getBoardPosition().getY() == 6 && selectedPiece.getOwner() == player1 || 
+											selectedPiece.getBoardPosition().getY() == 1 && selectedPiece.getOwner() == player2)
+									{
+										System.out.println("Promote");
+										doSimpleMove = false;
+										commandQueue.add(new PromoteCommand(this, selectedPiece, dependentMove));
+									}
+								}
+								
+								//Only add a MoveCommand if a more complicated move did not occur.
+								if(doSimpleMove)
+									commandQueue.add(new MoveCommand(this, selectedPiece, dependentMove));
 							}
 
 							commandQueue.executeNextCommand();
 							
 							selectedObject = null;
-							
-							fireTurnChangeEvent();
 							
 							moved = true;
 							

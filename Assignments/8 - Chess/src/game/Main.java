@@ -1,4 +1,4 @@
-package game;
+  package game;
 
 import game.chess.Chess;
 
@@ -9,6 +9,6 @@ public class Main
 		GameManager manager = GameManager.instance();
 		Chess board = new Chess();
 		
-		manager.createGame(board);
+		manager.startGame(board);
 	}
 }

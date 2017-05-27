@@ -23,9 +23,13 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 	
 	protected GameObject selectedObject;
 	
+	protected JPanel wrapper;
+	
 	public Game2D()
 	{
 		super();
+		
+		wrapper = initializeWrapper();
 		
 		components = new ArrayList<GameComponent>();
 		gameObjects = new ArrayList<GameObject>();
@@ -43,6 +47,11 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
+	}
+	
+	public JPanel getWrapper()
+	{
+		return wrapper;
 	}
 	
 	protected void fireUpdate()
@@ -99,6 +108,30 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 		
 		drawOverlay(g2d);
 	}
+	
+	public void registerComponent(GameComponent comp)
+	{
+		components.add(comp);
+	}
+	
+	public void unregisterComponent(GameComponent comp)
+	{
+		components.remove(comp);
+	}
+	
+	public void registerGameObject(GameObject obj)
+	{
+		gameObjects.add(obj);
+		
+		registerComponent(obj);
+	}
+	
+	public void unregisterGameObject(GameObject obj)
+	{
+		gameObjects.remove(obj);
+		
+		unregisterComponent(obj);
+	}
 
 	public List<GameComponent> getGameComponents()
 	{
@@ -128,6 +161,8 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 	public abstract float getXScale();
 	
 	public abstract float getYScale();
+	
+	protected abstract JPanel initializeWrapper();
 	
 	protected abstract void initializePlayers();
 	

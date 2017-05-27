@@ -1,17 +1,17 @@
 package game.position;
 
-public class ScaledPosition extends Position
+public class Vector extends Position
 {
 	private float scale = 1f;
 	
-	public ScaledPosition(float x, float y, float scale)
+	public Vector(float x, float y, float scale)
 	{
 		super(x,y);
 		
 		this.scale = scale;
 	}
 	
-	public ScaledPosition(Position position)
+	public Vector(Position position)
 	{
 		super(position.getX(), position.getY());
 	}

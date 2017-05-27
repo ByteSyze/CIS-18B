@@ -10,10 +10,10 @@ import game.Game2D;
 import game.GameObject;
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
-import game.chess.piece.path.CachedPath;
+import game.chess.piece.path.PathManager;
 import game.chess.piece.path.ChessPath;
 import game.position.Position;
-import game.position.ScaledPosition;
+import game.position.Vector;
 
 public class ChessPiece implements GameObject
 {
@@ -21,20 +21,45 @@ public class ChessPiece implements GameObject
 	
 	private static final float POSITION_SNAP_THRESH = 0.5f;
 	
+	/**The mesh that represents this ChessPiece.
+	 * 
+	 * <p>Models can be created by calling {@link ChessModels#create(Type) create()}.</p>
+	 * */
 	private ChessModels.Model model;
+	
+	/**The local scale of {@code model}.*/
+	private float modelScale = .75f;
+	
+	/**X-Offset for centering {@code model} during {@link ChessPiece#draw(Graphics2D) draw()}.*/
+	private int xOffset = 0;
+
+	/**Y-Offset for centering {@code model} during {@link ChessPiece#draw(Graphics2D) draw()}.*/
+	private int yOffset = 0;
 	
 	private Type type;
 	
 	private ChessPlayer owner;
 	
-	private CachedPath cachedPath;
+	/**The manager for generating and caching valid chess moves.*/
+	private PathManager pathManager;
 	
-	private ScaledPosition position;
+	/** 
+	 *  The perceived position on the Chess board. If {@code position} does not match 
+	 *  {@code boardPosition}, this ChessPiece will translate {@code position} towards 
+	 *  {@code boardPosition} each time {@link ChessPiece#update(Game2D) update()} is called.
+	 * */
+	private Vector position;
+	
+	/** 
+	 *  The symbolic position of the ChessPiece as it pertains to the chessBoard. In other words,
+	 *  {@code boardPosition} holds the X and Y index of this ChessPiece's location on the Chess board.
+	 * */
 	private Position boardPosition;
 	
 	protected Rectangle2D bounds;
 	
-	private boolean isCaptured;
+	/**Indicates whether this piece has been captured or not.*/
+	private boolean isCaptured = false;
 	
 	/**The number of times this ChessPiece has been moved.*/
 	private int moveCount = 0;
@@ -54,23 +79,26 @@ public class ChessPiece implements GameObject
 		
 		this.model = ChessModels.create(type);
 		
-		this.cachedPath = new CachedPath();
+		this.pathManager = new PathManager();
 		
 		this.boardPosition = boardPosition;
 		
-		this.position = new ScaledPosition(boardPosition);
+		this.position = new Vector(boardPosition);
 		
 		this.position.setScale(50f);
 		
 		this.bounds = new Rectangle2D.Float(position.getX(),position.getY(),this.getComponentWidth(), this.getComponentHeight());
+
+		this.xOffset = (int)(bounds.getWidth() - (getComponentWidth()*modelScale))/2;
+		this.yOffset = (int)(bounds.getHeight() - (getComponentHeight()*modelScale))/2;
 	}
 	
 	public void update(Game2D game)
 	{
 		//TODO use transforms to help with all of this junk.
 		
-		ScaledPosition scaledBoardPos = new ScaledPosition(getBoardPosition());
-		ScaledPosition pos = (ScaledPosition)getPosition();
+		Vector scaledBoardPos = new Vector(getBoardPosition());
+		Vector pos = (Vector)getPosition();
 		
 		scaledBoardPos.setScale(pos.getScale());
 		
@@ -88,21 +116,26 @@ public class ChessPiece implements GameObject
 	}
 
 	public void draw(Graphics2D g) 
-	{
+	{	
+		g.translate(xOffset, yOffset);	 // Center the ChessPiece model.
+		g.scale(modelScale, modelScale); // Apply scaling
+		
 		g.setColor(owner.getColor());
-		//g.drawString(type.name(), 0, 25);
 		g.fill(model);
 	}
 
 	public void highlight(Graphics2D g) 
 	{
+		g.translate(xOffset, yOffset);
+		g.scale(modelScale, modelScale);
+		
 		g.setColor(Color.GREEN);
 		g.draw(model);
 	}
 	
 	public void setPath(ChessPath path)
 	{
-		this.cachedPath.setPath(path);
+		this.pathManager.setPath(path);
 	}
 	
 	public ChessPlayer getOwner()
@@ -160,6 +193,19 @@ public class ChessPiece implements GameObject
 	}
 	
 	/**
+	 * Moves this ChessPiece by -{@code pos} relative to the ChessPiece's current position.
+	 * 
+	 * Useful for undoing calls to {@link ChessPiece#move(Position) move()}.
+	 * 
+	 * @param pos the negative relative change in position
+	 * */
+	public void unmove(Position pos)
+	{
+		moveCount--;
+		getBoardPosition().move(new Position(-pos.getX(), -pos.getY()));
+	}
+	
+	/**
 	 * Returns the true position of this chess piece.
 	 * */
 	public Position getPosition()
@@ -183,7 +229,7 @@ public class ChessPiece implements GameObject
 	 * */
 	public void invalidateMoves()
 	{
-		cachedPath.invalidate();
+		pathManager.invalidate();
 	}
 
 	/**
@@ -191,7 +237,7 @@ public class ChessPiece implements GameObject
 	 * */
 	public List<ChessMove> getValidMoves()
 	{
-		return cachedPath.getValidPath();
+		return pathManager.getValidPath();
 	}
 	
 	/**
@@ -200,7 +246,7 @@ public class ChessPiece implements GameObject
 	 * */
 	public List<ChessMove> getLookAheadMoves()
 	{
-		return cachedPath.getPredictivePath();
+		return pathManager.getPredictivePath();
 	}
 	
 	public float getComponentHeight()

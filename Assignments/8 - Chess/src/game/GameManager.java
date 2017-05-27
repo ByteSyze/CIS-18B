@@ -39,7 +39,7 @@ public class GameManager
 		boardUpdateTimer = new Timer((int)updateInterval, updater);
 	}
 	
-	public boolean createGame(Game2D game)
+	public boolean startGame(Game2D game)
 	{
 		if(this.game2D == null)
 		{
@@ -47,7 +47,9 @@ public class GameManager
 			
 			JFrame frame = new JFrame(String.format("Play %s", game.getTitle()));
 			
-			frame.add(game);
+			//frame.setLayout(new BorderLayout());
+			//frame.add(game, BorderLayout.CENTER);
+			frame.add(game.getWrapper());
 			frame.pack();
 			frame.setVisible(true);
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

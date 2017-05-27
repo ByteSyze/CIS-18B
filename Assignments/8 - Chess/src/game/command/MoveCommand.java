@@ -6,20 +6,17 @@ import game.position.Position;
 
 public class MoveCommand implements ReversibleCommand
 {
-	private Chess chess;
+	protected Chess chess;
 	
-	private ChessPiece chessPiece;
+	protected ChessPiece chessPiece;
 	
-	private Position move;
-	private Position reverseMove;
+	protected Position move;
 	
 	public MoveCommand(Chess chess, ChessPiece chessPiece, Position move)
 	{
 		this.chess = chess;
 		this.chessPiece = chessPiece;
 		this.move = move;
-		
-		this.reverseMove = new Position(-move.getX(), -move.getY());
 	}
 
 	@Override
@@ -32,6 +29,8 @@ public class MoveCommand implements ReversibleCommand
 		chess.setPieceAt(chessPiece.getBoardPosition(), chessPiece);
 		
 		chess.invalidateMoves();
+		
+		chess.fireTurnChangeEvent();
 	}
 
 	@Override
@@ -39,11 +38,13 @@ public class MoveCommand implements ReversibleCommand
 	{
 		chess.setPieceAt(chessPiece.getBoardPosition(), null);
 		
-		chessPiece.move(reverseMove);
+		chessPiece.unmove(move);
 		
 		chess.setPieceAt(chessPiece.getBoardPosition(), chessPiece);
 		
 		chess.invalidateMoves();
+		
+		chess.fireTurnChangeEvent();
 	}
 
 }
