@@ -15,26 +15,15 @@ import game.chess.piece.path.ChessPath;
 import game.position.Position;
 import game.position.Vector;
 
-public class ChessPiece implements GameObject
+public class ChessPiece
 {
 	public enum Type { PAWN, BISHOP, KNIGHT, ROOK, QUEEN, KING }
-	
-	private static final float POSITION_SNAP_THRESH = 0.5f;
 	
 	/**The mesh that represents this ChessPiece.
 	 * 
 	 * <p>Models can be created by calling {@link ChessModels#create(Type) create()}.</p>
 	 * */
-	private ChessModels.Model model;
-	
-	/**The local scale of {@code model}.*/
-	private float modelScale = .75f;
-	
-	/**X-Offset for centering {@code model} during {@link ChessPiece#draw(Graphics2D) draw()}.*/
-	private int xOffset = 0;
-
-	/**Y-Offset for centering {@code model} during {@link ChessPiece#draw(Graphics2D) draw()}.*/
-	private int yOffset = 0;
+	private ChessModels.Model mesh;
 	
 	private Type type;
 	
@@ -58,9 +47,6 @@ public class ChessPiece implements GameObject
 	
 	protected Rectangle2D bounds;
 	
-	/**Indicates whether this piece has been captured or not.*/
-	private boolean isCaptured = false;
-	
 	/**The number of times this ChessPiece has been moved.*/
 	private int moveCount = 0;
 	
@@ -75,9 +61,7 @@ public class ChessPiece implements GameObject
 		
 		this.type = type;
 		
-		this.isCaptured = false;
-		
-		this.model = ChessModels.create(type);
+		this.mesh = ChessModels.create(type);
 		
 		this.pathManager = new PathManager();
 		
@@ -87,50 +71,7 @@ public class ChessPiece implements GameObject
 		
 		this.position.setScale(50f);
 		
-		this.bounds = new Rectangle2D.Float(position.getX(),position.getY(),this.getComponentWidth(), this.getComponentHeight());
-
-		this.xOffset = (int)(bounds.getWidth() - (getComponentWidth()*modelScale))/2;
-		this.yOffset = (int)(bounds.getHeight() - (getComponentHeight()*modelScale))/2;
-	}
-	
-	public void update(Game2D game)
-	{
-		//TODO use transforms to help with all of this junk.
-		
-		Vector scaledBoardPos = new Vector(getBoardPosition());
-		Vector pos = (Vector)getPosition();
-		
-		scaledBoardPos.setScale(pos.getScale());
-		
-		if(pos.distanceSq(scaledBoardPos) > POSITION_SNAP_THRESH)
-		{
-			pos.move(new Position((scaledBoardPos.getX()-pos.getX())/500f,(scaledBoardPos.getY()-pos.getY())/500f));
-		}
-		else if((pos.getX() != scaledBoardPos.getX()) || (pos.getY() != scaledBoardPos.getY()))
-		{
-			pos.setX(scaledBoardPos.getUnscaledX());
-			pos.setY(scaledBoardPos.getUnscaledY());
-		}
-		
-		bounds.setRect(position.getX()*game.getXScale(), position.getY()*game.getYScale(), getComponentWidth()*game.getXScale(), getComponentHeight()*game.getYScale());
-	}
-
-	public void draw(Graphics2D g) 
-	{	
-		g.translate(xOffset, yOffset);	 // Center the ChessPiece model.
-		g.scale(modelScale, modelScale); // Apply scaling
-		
-		g.setColor(owner.getColor());
-		g.fill(model);
-	}
-
-	public void highlight(Graphics2D g) 
-	{
-		g.translate(xOffset, yOffset);
-		g.scale(modelScale, modelScale);
-		
-		g.setColor(Color.GREEN);
-		g.draw(model);
+		this.bounds = new Rectangle2D.Float(position.getX(),position.getY(), getComponentWidth(), getComponentHeight());
 	}
 	
 	public void setPath(ChessPath path)
@@ -158,19 +99,19 @@ public class ChessPiece implements GameObject
 		return bounds;
 	}
 	
-	public boolean isCaptured()
+	public ChessModels.Model getMesh()
 	{
-		return isCaptured;
+		return mesh;
 	}
 	
-	public void setCaptured(boolean captured)
+	public float getComponentHeight()
 	{
-		this.isCaptured = captured;
+		return 50f;
 	}
-	
-	public boolean isActive()
+
+	public float getComponentWidth() 
 	{
-		return !isCaptured();
+		return 50f;
 	}
 	
 	/**
@@ -247,16 +188,6 @@ public class ChessPiece implements GameObject
 	public List<ChessMove> getLookAheadMoves()
 	{
 		return pathManager.getPredictivePath();
-	}
-	
-	public float getComponentHeight()
-	{
-		return 50f;
-	}
-
-	public float getComponentWidth() 
-	{
-		return 50f;
 	}
 	
 	protected final static ChessMove cmove(int x, int y, ChessMove move)

@@ -6,17 +6,17 @@ import java.util.List;
 
 import game.Game2D;
 import game.TurnBasedPlayer;
-import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
 public class ChessPlayer extends TurnBasedPlayer
 {
 	private Color color;
 	
-	private ChessPiece king;
+	private ChessPieceController king;
 	
-	private List<ChessPiece> alivePieces;
-	private List<ChessPiece> slainPieces;
+	private List<ChessPieceController> alivePieces;
+	private List<ChessPieceController> slainPieces;
 	
 	private int[][] validMoveMap = new int[8][8];
 	
@@ -26,8 +26,8 @@ public class ChessPlayer extends TurnBasedPlayer
 		
 		this.color = color;
 		
-		this.alivePieces = new ArrayList<ChessPiece>(16);
-		this.slainPieces = new ArrayList<ChessPiece>();
+		this.alivePieces = new ArrayList<ChessPieceController>(16);
+		this.slainPieces = new ArrayList<ChessPieceController>();
 	}
 
 	@Override
@@ -44,9 +44,9 @@ public class ChessPlayer extends TurnBasedPlayer
 	 * */
 	public void invalidateMoves()
 	{
-		for(ChessPiece p : alivePieces)
+		for(ChessPieceController p : alivePieces)
 		{
-			p.invalidateMoves();
+			p.getModel().invalidateMoves();
 		}
 	}
 	
@@ -54,13 +54,13 @@ public class ChessPlayer extends TurnBasedPlayer
 	{
 		validMoveMap = new int[8][8];
 		
-		for(ChessPiece p : alivePieces)
+		for(ChessPieceController p : alivePieces)
 		{
-			for(ChessMove move : p.getValidMoves())
+			for(ChessMove move : p.getModel().getValidMoves())
 			{
 				for(ChessMove chain : move.asList())
 				{
-					Position chainPos = Position.add(p.getBoardPosition(), chain);
+					Position chainPos = Position.add(p.getModel().getBoardPosition(), chain);
 					
 					validMoveMap[(int)chainPos.getX()][(int)chainPos.getY()] = 1;
 				}
@@ -73,37 +73,37 @@ public class ChessPlayer extends TurnBasedPlayer
 		return color;
 	}
 	
-	public void addAlivePiece(ChessPiece alive)
+	public void addAlivePiece(ChessPieceController alive)
 	{
 		alivePieces.add(alive);
 	}
 	
-	public void setKing(ChessPiece king)
+	public void setKing(ChessPieceController king)
 	{
 		this.king = king;
 	}
 	
-	public ChessPiece getKing()
+	public ChessPieceController getKing()
 	{
 		return king;
 	}
 	
-	public List<ChessPiece> getAlivePieces()
+	public List<ChessPieceController> getAlivePieces()
 	{
 		return alivePieces;
 	}
 	
-	public void setAlivePieces(List<ChessPiece> pieces)
+	public void setAlivePieces(List<ChessPieceController> pieces)
 	{
 		alivePieces = pieces;
 	}
 	
-	public List<ChessPiece> getSlainPieces()
+	public List<ChessPieceController> getSlainPieces()
 	{
 		return slainPieces;
 	}
 	
-	public void setSlainPieces(List<ChessPiece> pieces)
+	public void setSlainPieces(List<ChessPieceController> pieces)
 	{
 		slainPieces = pieces;
 	}

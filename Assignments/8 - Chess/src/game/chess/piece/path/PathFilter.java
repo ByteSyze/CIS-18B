@@ -5,6 +5,7 @@ import java.util.List;
 import game.chess.Chess;
 import game.chess.ChessMove;
 import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 
 public abstract class PathFilter implements ChessPath
 {
@@ -20,7 +21,7 @@ public abstract class PathFilter implements ChessPath
 		return path.getChess();
 	}
 	
-	public ChessPiece getPiece()
+	public ChessPieceController getPiece()
 	{
 		return path.getPiece();
 	}

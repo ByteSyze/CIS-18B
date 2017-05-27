@@ -14,7 +14,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -46,7 +45,8 @@ public class Chess extends Game2D
 	
 	private ReversibleCommandQueue commandQueue;
 	
-	private ChessPiece[][] board; 
+	/**Underlying board layout.*/
+	private ChessPieceController[][] board; 
 	
 	private ChessPlayer currentTurn;
 	
@@ -141,15 +141,15 @@ public class Chess extends Game2D
 	{
 		if(selectedObject != null)
 		{
-			ChessPiece selectedPiece = (ChessPiece)selectedObject;
-			Position anchor = selectedPiece.getBoardPosition();
+			ChessPieceController selectedPiece = (ChessPieceController)selectedObject;
+			Position anchor = selectedPiece.getModel().getBoardPosition();
 			
 			int offset = (int)(cellSize/4);
 			int moveX, moveY;
 			
 			g.setColor(Color.GREEN);
 			
-			for(ChessMove move : selectedPiece.getValidMoves())
+			for(ChessMove move : selectedPiece.getModel().getValidMoves())
 			{
 				for(ChessMove chain : move.asList())
 				{
@@ -211,7 +211,7 @@ public class Chess extends Game2D
 
 	protected List<GameComponent> initializeGameComponents()
 	{
-		board = new ChessPiece[8][8];
+		board = new ChessPieceController[8][8];
 		
 		List<GameComponent> chessPieces = new ArrayList<GameComponent>();
 
@@ -238,22 +238,23 @@ public class Chess extends Game2D
 	 * @param	boardPosition	the initial board position of the ChessPiece
 	 * @param	type			the type of ChessPiece to create
 	 * */
-	public ChessPiece createPiece(ChessPlayer owner, Position boardPosition, ChessPiece.Type type)
+	public ChessPieceController createPiece(ChessPlayer owner, Position boardPosition, ChessPiece.Type type)
 	{
-		ChessPiece piece = new ChessPiece(owner, boardPosition, type);
+		ChessPiece model = new ChessPiece(owner, boardPosition, type);
+		ChessPieceController controller = new ChessPieceController(model);
 		
-		piece.setPath(PathFactory.createPath(this, piece));
+		model.setPath(PathFactory.createPath(this, controller));
 		
-		owner.addAlivePiece(piece);
-		this.setPieceAt(piece.getBoardPosition(), piece);
+		owner.addAlivePiece(controller);
+		this.setPieceAt(model.getBoardPosition(), controller);
 		
 		if(type == Type.KING)
-			owner.setKing(piece);
+			owner.setKing(controller);
 		
-		return piece;
+		return controller;
 	}
 	
-	public ChessPiece[][] getBoard()
+	public ChessPieceController[][] getBoard()
 	{
 		return board;
 	}
@@ -291,7 +292,7 @@ public class Chess extends Game2D
 	 * 
 	 * @return the ChessPiece at {@code boardPosition}, or null if no ChessPiece is at that location.
 	 * */
-	public ChessPiece getPieceAt(Position boardPosition)
+	public ChessPieceController getPieceAt(Position boardPosition)
 	{
 		return board[(int)boardPosition.getX()][(int)boardPosition.getY()];
 	}
@@ -302,7 +303,7 @@ public class Chess extends Game2D
 	 * @param boardPosition the position on the chess board to place the ChessPiece
 	 * @param piece the ChessPiece to be set
 	 * */
-	public void setPieceAt(Position boardPosition, ChessPiece piece)
+	public void setPieceAt(Position boardPosition, ChessPieceController piece)
 	{
 		board[(int)boardPosition.getX()][(int)boardPosition.getY()] = piece;
 	}
@@ -349,17 +350,17 @@ public class Chess extends Game2D
 		
 		if(selectedObject != null)
 		{
-			ChessPiece selectedPiece = (ChessPiece)selectedObject;
+			ChessPieceController selectedPiece = (ChessPieceController)selectedObject;
 			
 			if(selectedPiece.getOwner() == currentTurn)
 			{
 				Rectangle2D.Float optionBounds = new Rectangle2D.Float();
 				
-				Position anchor = selectedPiece.getBoardPosition();
+				Position anchor = selectedPiece.getModel().getBoardPosition();
 	
 				int moveX, moveY;
 				
-				for(ChessMove move : selectedPiece.getValidMoves())
+				for(ChessMove move : selectedPiece.getModel().getValidMoves())
 				{
 					ChessMove dependentMove = move;
 					
@@ -373,11 +374,11 @@ public class Chess extends Game2D
 						if(optionBounds.contains(e.getPoint()))
 						{
 							ChessPlayer opponent = (currentTurn == player1) ? player2 : player1;
-							ChessPiece captured = null;
+							ChessPieceController captured = null;
 							
-							for(ChessPiece p : opponent.getAlivePieces())
+							for(ChessPieceController p : opponent.getAlivePieces())
 							{
-								if(p.getBoardPosition().equals(Position.add(selectedPiece.getBoardPosition(), dependentMove)))
+								if(p.getModel().getBoardPosition().equals(Position.add(selectedPiece.getModel().getBoardPosition(), dependentMove)))
 								{
 									captured = p;
 									break;
@@ -391,10 +392,10 @@ public class Chess extends Game2D
 							else
 							{
 								boolean doSimpleMove = true;
-								if(selectedPiece.getType() == Type.PAWN)
+								if(selectedPiece.getModel().getType() == Type.PAWN)
 								{
-									if(selectedPiece.getBoardPosition().getY() == 6 && selectedPiece.getOwner() == player1 || 
-											selectedPiece.getBoardPosition().getY() == 1 && selectedPiece.getOwner() == player2)
+									if(selectedPiece.getModel().getBoardPosition().getY() == 6 && selectedPiece.getOwner() == player1 || 
+											selectedPiece.getModel().getBoardPosition().getY() == 1 && selectedPiece.getOwner() == player2)
 									{
 										System.out.println("Promote");
 										doSimpleMove = false;
@@ -433,13 +434,13 @@ public class Chess extends Game2D
 			{
 				if(obj.getBounds().contains(e.getPoint()))
 				{
-					if(obj instanceof ChessPiece)
+					if(obj instanceof ChessPieceController)
 					{
-						if(!((ChessPiece)obj).isActive())
+						if(!((ChessPieceController)obj).isActive())
 						{
 							continue;
 						}
-						else if(((ChessPiece)obj).getOwner() != currentTurn)
+						else if(((ChessPieceController)obj).getOwner() != currentTurn)
 						{
 							return;
 						}

@@ -1,16 +1,16 @@
 package game.command;
 
 import game.chess.Chess;
-import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
 public class CaptureCommand extends MoveCommand
 {
-	private ChessPiece captured;
+	private ChessPieceController captured;
 	
-	public CaptureCommand(Chess chess, ChessPiece capturer, ChessPiece captured)
+	public CaptureCommand(Chess chess, ChessPieceController capturer, ChessPieceController captured)
 	{
-		super(chess, capturer, Position.subtract(captured.getBoardPosition(), capturer.getBoardPosition()));
+		super(chess, capturer, Position.subtract(captured.getModel().getBoardPosition(), capturer.getModel().getBoardPosition()));
 		
 		this.captured = captured;
 	}

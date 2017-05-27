@@ -2,6 +2,7 @@ package game.command;
 
 import game.chess.Chess;
 import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
 /**
@@ -10,9 +11,9 @@ import game.position.Position;
 public class PromoteCommand extends MoveCommand
 {	
 	/**The new Queen that will take the place of the promoted Pawn.*/
-	private ChessPiece queen;
+	private ChessPieceController queen;
 	
-	public PromoteCommand(Chess chess, ChessPiece chessPiece, Position move) 
+	public PromoteCommand(Chess chess, ChessPieceController chessPiece, Position move) 
 	{
 		super(chess, chessPiece, move);
 	}
@@ -22,7 +23,7 @@ public class PromoteCommand extends MoveCommand
 		super.execute();
 		
 		if(queen == null)
-			queen = chess.createPiece(chessPiece.getOwner(), chessPiece.getBoardPosition(), ChessPiece.Type.QUEEN);
+			queen = chess.createPiece(chessPiece.getOwner(), chessPiece.getModel().getBoardPosition(), ChessPiece.Type.QUEEN);
 		
 		chessPiece.getOwner().getAlivePieces().remove(chessPiece);
 		chess.unregisterGameObject(chessPiece);

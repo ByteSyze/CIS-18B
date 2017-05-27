@@ -4,7 +4,7 @@ import java.util.List;
 
 import game.chess.Chess;
 import game.chess.ChessMove;
-import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 
 /**
  * Generates a list of valid moves for a ChessPiece.
@@ -14,7 +14,7 @@ public interface ChessPath
 	/**
 	 * Returns the ChessPiece associated with this path.
 	 * */
-	public ChessPiece getPiece();
+	public ChessPieceController getPiece();
 	
 	/**
 	 * Returns the Chess game associated with this path.

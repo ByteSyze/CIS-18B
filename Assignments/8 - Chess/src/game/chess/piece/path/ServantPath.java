@@ -6,6 +6,7 @@ import java.util.List;
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
 import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
 /**
@@ -26,7 +27,7 @@ public class ServantPath extends PathFilter
 		}
 		
 		ChessPlayer opponent = null;
-		Position kingPos = getPiece().getOwner().getKing().getBoardPosition();
+		Position kingPos = getPiece().getOwner().getKing().getModel().getBoardPosition();
 
 		if(getPiece().getOwner() == getChess().getPlayerOne())
 			opponent = getChess().getPlayerTwo();
@@ -38,24 +39,24 @@ public class ServantPath extends PathFilter
 			List<ChessMove> oldValidMoves = super.generateValidPath();
 			List<ChessMove> validMoves = new ArrayList<ChessMove>();
 			
-			List<ChessPiece> targetEnemies = new ArrayList<ChessPiece>(); //Enemy pieces that can reach the King.
+			List<ChessPieceController> targetEnemies = new ArrayList<ChessPieceController>(); //Enemy pieces that can reach the King.
 			List<ChessMove> blockOptions = new ArrayList<ChessMove>(); //Board positions that can block the King.
 			
 			boolean canBlockKing = true;
 			
-			for(ChessPiece p : opponent.getAlivePieces())
+			for(ChessPieceController p : opponent.getAlivePieces())
 			{
-				for(ChessMove enemyMove : p.getValidMoves())
+				for(ChessMove enemyMove : p.getModel().getValidMoves())
 				{
 					for(ChessMove chain : enemyMove.asList())
 					{
-						if(Position.add(p.getBoardPosition(), chain).equals(kingPos))
+						if(Position.add(p.getModel().getBoardPosition(), chain).equals(kingPos))
 						{
 							if(chain == enemyMove) 
 								canBlockKing = false;
 							else
 							{
-								ChessMove root = new ChessMove(p.getBoardPosition());
+								ChessMove root = new ChessMove(p.getModel().getBoardPosition());
 								root.setNextMove(enemyMove);
 								
 								blockOptions.add(root);
@@ -74,7 +75,7 @@ public class ServantPath extends PathFilter
 				{
 					for(ChessMove chain : move.asList())
 					{
-						Position chainPos = Position.add(getPiece().getBoardPosition(), chain);
+						Position chainPos = Position.add(getPiece().getModel().getBoardPosition(), chain);
 						
 						for(ChessMove blockOption : blockOptions)
 						{
@@ -100,13 +101,13 @@ public class ServantPath extends PathFilter
 				//of the King, check for ways to take out that piece.
 				if(targetEnemies.size() == 1)
 				{
-					ChessPiece target = targetEnemies.get(0);
+					ChessPieceController target = targetEnemies.get(0);
 					
 					for(ChessMove move : oldValidMoves)
 					{
 						for(ChessMove chain : move.asList())
 						{
-							if(Position.add(getPiece().getBoardPosition(), chain).equals(target.getBoardPosition()))
+							if(Position.add(getPiece().getModel().getBoardPosition(), chain).equals(target.getModel().getBoardPosition()))
 							{
 								chain.setNextMove(null);
 								validMoves.add(chain);

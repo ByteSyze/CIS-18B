@@ -5,6 +5,7 @@ import java.util.List;
 
 import game.chess.ChessMove;
 import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
 /**
@@ -49,7 +50,7 @@ public class BoundedPath extends PathFilter
 		{
 			for(ChessMove chain : move.asList())
 			{
-				moveBoardPos = Position.add(getPiece().getBoardPosition(), chain);
+				moveBoardPos = Position.add(getPiece().getModel().getBoardPosition(), chain);
 				
 				if((moveBoardPos.getX() > 7) || (moveBoardPos.getY() > 7) ||
 						(moveBoardPos.getX() < 0) || (moveBoardPos.getY() < 0))
@@ -65,16 +66,16 @@ public class BoundedPath extends PathFilter
 		moves.removeAll(outOfBounds);
 	}
 	
-	private void filterBlockedMoves(List<ChessMove> moves, List<ChessPiece> pieces)
+	private void filterBlockedMoves(List<ChessMove> moves, List<ChessPieceController> pieces)
 	{
 		List<ChessMove> invalidRootMoves = new ArrayList<ChessMove>();
-		ChessPiece hit;
+		ChessPieceController hit;
 		
 		for(ChessMove move : moves)
 		{
 			for(ChessMove chain : move.asList())
 			{
-				hit = getChess().getPieceAt(Position.add(getPiece().getBoardPosition(), chain));
+				hit = getChess().getPieceAt(Position.add(getPiece().getModel().getBoardPosition(), chain));
 				
 				if(hit != null)
 				{

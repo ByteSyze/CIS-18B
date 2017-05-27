@@ -5,6 +5,7 @@ import java.util.List;
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
 import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
 public class PawnPath extends PathFilter
@@ -26,21 +27,21 @@ public class PawnPath extends PathFilter
 		ChessMove pawnAttackMove1 = new ChessMove(1,pawnMove.getY());
 		ChessMove pawnAttackMove2 = new ChessMove(-1,pawnMove.getY());
 		
-		Position pawnMovePos    = Position.add(getPiece().getBoardPosition(), pawnMove);
-		Position pawnAttackPos1 = Position.add(getPiece().getBoardPosition(), pawnAttackMove1);
-		Position pawnAttackPos2 = Position.add(getPiece().getBoardPosition(), pawnAttackMove2);
+		Position pawnMovePos    = Position.add(getPiece().getModel().getBoardPosition(), pawnMove);
+		Position pawnAttackPos1 = Position.add(getPiece().getModel().getBoardPosition(), pawnAttackMove1);
+		Position pawnAttackPos2 = Position.add(getPiece().getModel().getBoardPosition(), pawnAttackMove2);
 		
-		for(ChessPiece enemy : opponent.getAlivePieces())
+		for(ChessPieceController enemy : opponent.getAlivePieces())
 		{
-			if(enemy.getBoardPosition().equals(pawnMovePos))
+			if(enemy.getModel().getBoardPosition().equals(pawnMovePos))
 			{
 				pawnMoveInvalid = true;
 			}
-			else if(enemy.getBoardPosition().equals(pawnAttackPos1))
+			else if(enemy.getModel().getBoardPosition().equals(pawnAttackPos1))
 			{
 				path.add(pawnAttackMove1);
 			}
-			else if(enemy.getBoardPosition().equals(pawnAttackPos2))
+			else if(enemy.getModel().getBoardPosition().equals(pawnAttackPos2))
 			{
 				path.add(pawnAttackMove2);
 			}

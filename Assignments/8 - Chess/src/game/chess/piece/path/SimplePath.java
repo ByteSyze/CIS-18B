@@ -7,13 +7,14 @@ import java.util.List;
 import game.chess.Chess;
 import game.chess.ChessMove;
 import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 
 public abstract class SimplePath implements ChessPath
 {
 	private Chess chess;
-	private ChessPiece piece;
+	private ChessPieceController piece;
 	
-	public SimplePath(Chess chess, ChessPiece piece)
+	public SimplePath(Chess chess, ChessPieceController piece)
 	{
 		this.chess = chess;
 		this.piece = piece;
@@ -24,7 +25,7 @@ public abstract class SimplePath implements ChessPath
 		return chess;
 	}
 	
-	public ChessPiece getPiece()
+	public ChessPieceController getPiece()
 	{
 		return piece;
 	}
@@ -57,9 +58,9 @@ public abstract class SimplePath implements ChessPath
 	
 	//// Base PathFinder classes /////
 	
-	public static NaivePath getSimplePath(Chess chess, ChessPiece piece)
+	public static NaivePath getSimplePath(Chess chess, ChessPieceController piece)
 	{
-		switch(piece.getType())
+		switch(piece.getModel().getType())
 		{
 			case PAWN:
 				return new NaivePawnPath(chess, piece);
@@ -84,7 +85,7 @@ public abstract class SimplePath implements ChessPath
 	 * */
 	protected static abstract class NaivePath extends SimplePath
 	{
-		public NaivePath(Chess chess, ChessPiece piece)
+		public NaivePath(Chess chess, ChessPieceController piece)
 		{
 			super(chess, piece);
 		}
@@ -118,14 +119,14 @@ public abstract class SimplePath implements ChessPath
 		private static final ChessMove[] PAWN_FIRST_MOVES = { cmove(0,1,cmove(0,2)) };
 		private static final ChessMove[] PAWN_MOVES = { cmove(0,1) };
 		
-		public NaivePawnPath(Chess chess, ChessPiece piece)
+		public NaivePawnPath(Chess chess, ChessPieceController piece)
 		{
 			super(chess, piece);
 		}
 
 		protected ChessMove[] getNaiveMoves()
 		{
-			if(getPiece().getMoveCount() == 0)
+			if(getPiece().getModel().getMoveCount() == 0)
 			{
 				return PAWN_FIRST_MOVES;
 			}
@@ -139,7 +140,7 @@ public abstract class SimplePath implements ChessPath
 		private static final ChessMove[] BISHOP_MOVES = 
 			{ cmove(1,1,cmove(2,2,cmove(3,3,cmove(4,4,cmove(5,5,cmove(6,6,cmove(7,7))))))) }; //Diagonal
 		
-		public NaiveBishopPath(Chess chess, ChessPiece piece)
+		public NaiveBishopPath(Chess chess, ChessPieceController piece)
 		{
 			super(chess, piece);
 		}
@@ -154,7 +155,7 @@ public abstract class SimplePath implements ChessPath
 	{
 		private static final ChessMove[] KNIGHT_MOVES = {cmove(1,2),cmove(2,1)}; //L-Shapes
 		
-		public NaiveKnightPath(Chess chess, ChessPiece piece)
+		public NaiveKnightPath(Chess chess, ChessPieceController piece)
 		{
 			super(chess, piece);
 		}
@@ -170,7 +171,7 @@ public abstract class SimplePath implements ChessPath
 		private static final ChessMove[] ROOK_MOVES = 
 			{ cmove(0,1,cmove(0,2,cmove(0,3,cmove(0,4,cmove(0,5,cmove(0,6,cmove(0,7))))))) };//Vertical
 		
-		public NaiveRookPath(Chess chess, ChessPiece piece)
+		public NaiveRookPath(Chess chess, ChessPieceController piece)
 		{
 			super(chess, piece);
 		}
@@ -188,7 +189,7 @@ public abstract class SimplePath implements ChessPath
 			 cmove(1,1,cmove(2,2,cmove(3,3,cmove(4,4,cmove(5,5,cmove(6,6,cmove(7,7))))))), //Diagonal
 			 cmove(1,0,cmove(2,0,cmove(3,0,cmove(4,0,cmove(5,0,cmove(6,0,cmove(7,0)))))))};//Horizontal
 		
-		public NaiveQueenPath(Chess chess, ChessPiece piece)
+		public NaiveQueenPath(Chess chess, ChessPieceController piece)
 		{
 			super(chess, piece);
 		}
@@ -203,7 +204,7 @@ public abstract class SimplePath implements ChessPath
 	{
 		private static final ChessMove[] KING_MOVES = { cmove(0,1), cmove(1,1) };
 		
-		public NaiveKingPath(Chess chess, ChessPiece piece)
+		public NaiveKingPath(Chess chess, ChessPieceController piece)
 		{
 			super(chess, piece);
 		}

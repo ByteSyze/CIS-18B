@@ -3,10 +3,11 @@ package game.chess.piece.path;
 import game.chess.Chess;
 import game.chess.piece.ChessPiece;
 import game.chess.piece.ChessPiece.Type;
+import game.chess.piece.ChessPieceController;
 
 public class PathFactory 
 {
-	public static ChessPath createPath(Chess chess, ChessPiece piece)
+	public static ChessPath createPath(Chess chess, ChessPieceController piece)
 	{
 		ChessPath path = SimplePath.getSimplePath(chess, piece);
 		
@@ -30,14 +31,14 @@ public class PathFactory
 		return path;
 	}
 	
-	private static boolean isSymmetrical(ChessPiece piece)
+	private static boolean isSymmetrical(ChessPieceController piece)
 	{
-		return (piece.getType() != Type.PAWN);
+		return (piece.getModel().getType() != Type.PAWN);
 	}
 	
-	private static boolean isServant(ChessPiece piece)
+	private static boolean isServant(ChessPieceController piece)
 	{
-		return (piece.getType() != Type.KING);
+		return (piece.getModel().getType() != Type.KING);
 	}
 
 }

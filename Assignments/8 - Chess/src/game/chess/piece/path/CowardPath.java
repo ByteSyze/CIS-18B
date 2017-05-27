@@ -6,6 +6,7 @@ import java.util.List;
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
 import game.chess.piece.ChessPiece;
+import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
 /**
@@ -32,9 +33,9 @@ public class CowardPath extends PathFilter
 		
 		List<ChessMove> validMoves = super.generateValidPath();
 		
-		for(ChessPiece enemy : opponent.getAlivePieces())
+		for(ChessPieceController enemy : opponent.getAlivePieces())
 		{
-			for(ChessMove enemyMove : enemy.getValidMoves())
+			for(ChessMove enemyMove : enemy.getModel().getValidMoves())
 			{
 				for(ChessMove enemyChain : enemyMove.asList())
 				{
@@ -42,8 +43,8 @@ public class CowardPath extends PathFilter
 					{
 						for(ChessMove chain : move.asList())
 						{
-							Position lookAheadPos = Position.add(getPiece().getBoardPosition(), chain);
-							Position enemyPos = Position.add(enemy.getBoardPosition(), enemyChain);
+							Position lookAheadPos = Position.add(getPiece().getModel().getBoardPosition(), chain);
+							Position enemyPos = Position.add(enemy.getModel().getBoardPosition(), enemyChain);
 							
 							if(lookAheadPos.equals(enemyPos))
 							{
