@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import game.chess.ChessMove;
-import game.chess.piece.ChessPiece;
 import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
@@ -36,6 +35,8 @@ public class BoundedPath extends PathFilter
 		List<ChessMove> moves = super.generatePredictivePath();
 		
 		filterLimits(moves);
+		
+		filterBlockedMoves(moves, getPiece().getOwner().getAlivePieces());
 		
 		return moves;
 	}
@@ -79,14 +80,27 @@ public class BoundedPath extends PathFilter
 				
 				if(hit != null)
 				{
-					boolean sameOwner = (hit.getOwner() == getPiece().getOwner());
+					boolean invalidate = pieces.contains(hit);
 					
-					if(chain == move && sameOwner)
-						invalidRootMoves.add(move);
-					else if(sameOwner)
-						chain.getPreviousMove().setNextMove(null);
-					else
-						chain.setNextMove(null);
+					if(invalidate && chain.isAttack())
+					{
+						boolean sameOwner = (hit.getOwner() == getPiece().getOwner());
+						
+						if(chain == move && sameOwner)
+							invalidRootMoves.add(move);
+						else if(sameOwner)
+							chain.getPreviousMove().setNextMove(null);
+						else
+							chain.setNextMove(null);
+					}
+					else if(invalidate)
+					{
+						System.out.println(chain == move);
+						if(chain == move)
+							invalidRootMoves.add(move);
+						else
+							chain.getPreviousMove().setNextMove(null);
+					}
 				}
 			}
 		}

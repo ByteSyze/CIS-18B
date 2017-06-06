@@ -1,7 +1,6 @@
 package game.chess.piece.path;
 
 import game.chess.Chess;
-import game.chess.piece.ChessPiece;
 import game.chess.piece.ChessPiece.Type;
 import game.chess.piece.ChessPieceController;
 

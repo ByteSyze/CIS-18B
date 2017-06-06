@@ -1,0 +1,75 @@
+
+Week - 1: Assignment "Hello World"
+
+To demonstrate to me that you've accessed Blackboard, have read the "Welcome" message above, and have successfully downloaded the necessary software to take the course, please create a project that displays (via command line or some other means is your choice) the words "Hello World" to an end user. Create a video briefly introducing yourself that demonstrates satisfactory completion of this assignment.
+
+
+Week 4: The Factory Pattern
+
+This week we're going to do something crazy: I'm going to give you a chapter to read, but with no assignment. Bonkers, right?!
+
+For this week, read Chapter 4 in the book, which covers the Factory Pattern. The Factory Design Pattern is arguably the easiest pattern we've learned yet. It basically asks that instead of using the "new" keyword wherever you need a new instance of an object, that you instead rely on a "factory" object to do the creation for you. The reasoning behind this might not seem so straight forward just in reading this description, but once you're through with the chapter it should be clear. Note that this design pattern will FOR SURE be on the midterm, so make sure to read this chapter and study hard for work that is yet to come. Enjoy the week without an assignment, but be sure to put in the time and effort into your reading!
+
+
+Week 5: The Singleton Design Pattern
+
+Some design patterns can get downright complicated, but not the singleton. The singleton design pattern allows for easy access to an object by strictly enforcing that only one instance of that type of object be allowed to exist. After reading the chapter on Singletons, go to your favorite search engine and search for forum entires in which other programmers share and ask questions about the design pattern. If you pay attention and read closely, you'll find that there are some seriously mixed opinions about this design pattern. Some programmers love it, while others have called it an "anti pattern" and say that you should never use it. 
+
+After doing some research, write a two page paper stating why you do or do not think that the singleton design pattern should be used. Cite your research wherever possible to support your opinion. When finished, upload your paper to Blackboard.
+
+
+Week 6: Command Pattern
+
+The Command Pattern is an infinitely useful technique that allows for you to encapsulate invocation. Read the chapter on the Command Pattern (Chapter 6), then implement a solution to the following problem:
+
+1. Create a menu that allows the user to choose between one of four different directions: Up, Down, Left, or Right.
+
+2. Keep track of the user's "position". Assume that the user starts at a position 0,0, where these numbers represent x and y axis respectively. If the user elects to move up, increment the y position by 1. If the user elects to move down, decrement the y position by 1. Mirror this functionality for the x axis and Left / Right options respectively. 
+
+3. After the user makes a decision, print out the user's current position and show the menu again.
+
+4. Add an additional menu option called "Go Back". When the user selects this option, your program should undo the last move, print out the user's current position, and show the menu again. 
+
+5. Make sure that you solve this problem using the Command Pattern (there are many, many ways to write this program, but a Command Pattern solution is required to receive points!)
+
+
+Week 8: Midterm
+
+Hello class, and welcome to your Midterm! It will test your knowledge and applicability of the topics you've learned in this class. You have until Monday, April 10th 2017 at 11:59 PM to complete it. The Midterm is broken down into two sections: a practical programming part, and a questions part. Please be sure to do both. Also be sure to record a video for the programming section as you typically do with your projects. 
+
+CIS 18B Midterm
+Implement a visual game of Tic Tac Toe (using ascii art is fine). The game should ask two players to take turns identifying where they would like to place their mark on a typical Tic Tac Toe game board. How you implement the rules of The game is up to you; what I care about is that you use the following design patterns:
+
+
+Use a singleton called GameManager that manages the general rules of the game. This object should also be responsible for managing whose turn it is.
+
+Use the factory pattern to create your pieces at the designated locations.
+
+Use the Observer pattern to notify the GameManager when a player has finished their turn.
+
+Use the Command Pattern to allow for players to "undo" their moves
+
+
+Next, answer the following questions in paragraph form:
+
+If you were asked to use the Decorator Pattern to solve the Tic Tac Toe program above, how might you use it? Would it be valuable? Why or why not? Be specific.
+
+If you were asked to use the Adapter Pattern to solve the Tic Tac Toe program above, how might you use it? Would it be valuable? Why or why not? Be specific.
+
+If you were asked to use the Facade Pattern to solve the Tic Tac Toe program above, how might you use it? Would it be valuable? Why or why not? Be specific.
+
+
+
+Week 11: Getting Started
+
+Hey team! I'm working through the last of the grading for the class, so expect all of that to be up to date by the end of the week. 
+
+I have no homework for you this week, but encourage you to begin some early planning (and possibly some light implementation) on your final project for the course, which is Chess. Here are some things I recommend you get started on:
+
+- Your board: how will you manage it? How will you organize grid squares? What functionality will you allocate and where?
+
+- Chess pieces: what attributes do they share in common? What makes them different? Is inheritance your friend or your enemy here?
+
+- Visualization and Utility: how will you visualize the board? Will you? How will you elect to make moves?
+
+Thanks for your patience and good luck getting things rolling on what will undoubtedly be a challenging yet rewarding project!

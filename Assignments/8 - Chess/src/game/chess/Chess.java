@@ -1,13 +1,16 @@
 package game.chess;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint;
 import java.awt.Paint;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -54,9 +57,13 @@ public class Chess extends Game2D
 	
 	private ChessPlayer player2;
 	
-	//UI stuff
+	private ChessPlayer winner;
 	
-	private JList<String> moveList;
+	private boolean gameOver = false;
+	
+	private int boardWidth, boardHeight;
+	
+	//UI stuff
 	
 	private JButton undoButton, redoButton;
 	
@@ -69,7 +76,7 @@ public class Chess extends Game2D
 		currentTurn = player1;
 		
 		//
-		//Generate checkerboard textures
+		//Generate checker board textures
 		//
 		//Marble texture
 		Point2D start = new Point2D.Float(0, 0);
@@ -98,29 +105,40 @@ public class Chess extends Game2D
 		this.setPreferredSize(this.getMinimumSize());
 	}
 	
-	public void fireUpdate()
+	public void update()
 	{
-		super.fireUpdate();
-		
-		for(GameComponent c : components)
+		if(!player1.hasValidMoves())
 		{
-			c.update(this);
+			gameOver = true;
+			winner = player2;
+		}
+		else if(!player2.hasValidMoves())
+		{
+			gameOver = true;
+			winner = player1;
+		}
+		else
+		{
+			gameOver = false;
+			winner = null;
 		}
 	}
 
 	@Override
 	public void draw(Graphics2D g)
-	{
-		//int gameWidth = (2*getWidth())/3;
-		int gameWidth = getWidth();
+	{	
+		//boardWidth and boardHeight determine the maximum window real estate the chess board can use.
+		boardWidth = getWidth();
+		boardHeight = getHeight();
 		
-		float smallestAxis = getHeight() < gameWidth ? getHeight() : gameWidth;
+		float smallestAxis = boardHeight < boardWidth ? boardHeight : boardWidth;
 		scale = smallestAxis/(cellSize*8);
 		
 		g.scale(scale, scale);
 		
 		int colorIdx = 0;
 		
+		//Draw the checkerboard
 		for(int i = 0; i < 8; i++)
 		{
 			colorIdx++;
@@ -151,6 +169,11 @@ public class Chess extends Game2D
 			
 			for(ChessMove move : selectedPiece.getModel().getValidMoves())
 			{
+				if(move.isAttack())
+					g.setColor(Color.RED);
+				else
+					g.setColor(Color.GREEN);
+				
 				for(ChessMove chain : move.asList())
 				{
 					moveX = (int)((anchor.getX()+chain.getX())*cellSize)+offset;
@@ -159,6 +182,11 @@ public class Chess extends Game2D
 					g.fillOval(moveX, moveY, 25, 25);
 				}
 			}
+		}
+		if(isGameOver())
+		{
+			g.setColor(Color.WHITE);
+			g.drawString(winner + " wins!", 3*cellSize,4*cellSize);
 		}
 	}
 	
@@ -186,15 +214,6 @@ public class Chess extends Game2D
 		//buttonContainer.add(redoButton);
 		
 		wrapper.add(buttonContainer, BorderLayout.SOUTH);
-		
-		//DefaultListModel<String> model = new DefaultListModel<String>();
-		//moveList = new JList<String>(model);
-		
-		//moveList.setMaximumSize(new Dimension(300,300));
-		
-		//model.addElement("Hello World");
-		
-		//wrapper.add(moveList, BorderLayout.EAST);
 		
 		return wrapper;
 	}
@@ -232,7 +251,7 @@ public class Chess extends Game2D
 	}
 	
 	/**
-	 * Creates a new ChessPiece with the given parameters.
+	 * Creates a new ChessPieceController with the given parameters.
 	 * 
 	 * @param	owner			the owner of the new ChessPiece
 	 * @param	boardPosition	the initial board position of the ChessPiece
@@ -321,6 +340,11 @@ public class Chess extends Game2D
 	public ChessPlayer getPlayerTwo()
 	{
 		return player2;
+	}
+	
+	public boolean isGameOver()
+	{
+		return gameOver;
 	}
 	
 	public float getCellSize()

@@ -5,7 +5,6 @@ import java.util.List;
 
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
-import game.chess.piece.ChessPiece;
 import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
@@ -35,23 +34,26 @@ public class CowardPath extends PathFilter
 		
 		for(ChessPieceController enemy : opponent.getAlivePieces())
 		{
-			for(ChessMove enemyMove : enemy.getModel().getValidMoves())
+			for(ChessMove enemyMove : enemy.getModel().getLookAheadMoves())
 			{
-				for(ChessMove enemyChain : enemyMove.asList())
+				if(enemyMove.isAttack())
 				{
-					for(ChessMove move : validMoves)
+					for(ChessMove enemyChain : enemyMove.asList())
 					{
-						for(ChessMove chain : move.asList())
+						for(ChessMove move : validMoves)
 						{
-							Position lookAheadPos = Position.add(getPiece().getModel().getBoardPosition(), chain);
-							Position enemyPos = Position.add(enemy.getModel().getBoardPosition(), enemyChain);
-							
-							if(lookAheadPos.equals(enemyPos))
+							for(ChessMove chain : move.asList())
 							{
-								if(chain == move)
-									invalidMoves.add(move);
-								else
-									chain.getPreviousMove().setNextMove(null);
+								Position lookAheadPos = Position.add(getPiece().getModel().getBoardPosition(), chain);
+								Position enemyPos = Position.add(enemy.getModel().getBoardPosition(), enemyChain);
+								
+								if(lookAheadPos.equals(enemyPos))
+								{
+									if(chain == move)
+										invalidMoves.add(move);
+									else
+										chain.getPreviousMove().setNextMove(null);
+								}
 							}
 						}
 					}

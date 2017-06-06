@@ -14,5 +14,10 @@ public abstract class TurnBasedPlayer implements GameComponent
 		return playerID;
 	}
 	
+	public String toString()
+	{
+		return String.format("Player %d", getID());
+	}
+	
 	public abstract void onTurn(Game2D game);
 }

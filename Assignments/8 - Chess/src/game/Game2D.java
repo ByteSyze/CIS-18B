@@ -54,12 +54,14 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 		return wrapper;
 	}
 	
-	protected void fireUpdate()
+	protected final void fireUpdate()
 	{
 		for(GameComponent c : components)
 		{
 			c.update(this);
 		}
+		
+		update();
 	}
 	
 	public void paint(Graphics g)
@@ -162,9 +164,13 @@ public abstract class Game2D extends JPanel implements MouseListener, MouseMotio
 	
 	public abstract float getYScale();
 	
+	public abstract boolean isGameOver();
+	
 	protected abstract JPanel initializeWrapper();
 	
 	protected abstract void initializePlayers();
 	
 	protected abstract List<GameComponent> initializeGameComponents();
+	
+	protected abstract void update();
 }

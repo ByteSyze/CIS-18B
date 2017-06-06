@@ -4,7 +4,6 @@ import java.util.List;
 
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
-import game.chess.piece.ChessPiece;
 import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
@@ -35,7 +34,7 @@ public class PawnPath extends PathFilter
 		{
 			if(enemy.getModel().getBoardPosition().equals(pawnMovePos))
 			{
-				pawnMoveInvalid = true;
+				//pawnMoveInvalid = true;
 			}
 			else if(enemy.getModel().getBoardPosition().equals(pawnAttackPos1))
 			{
@@ -51,5 +50,20 @@ public class PawnPath extends PathFilter
 			path.remove(pawnMove);
 		
 		return path;
+	}
+	
+	public List<ChessMove> generatePredictivePath()
+	{
+		////
+		// If you think this looks like some shady workaround coding...
+		// That's because it is :)
+		////
+		List<ChessMove> moves = super.generatePredictivePath();
+		ChessMove fwd = moves.get(0);
+		
+		moves.add(new ChessMove(-1,fwd.getY()));
+		moves.add(new ChessMove(1,fwd.getY()));
+		
+		return moves;
 	}
 }

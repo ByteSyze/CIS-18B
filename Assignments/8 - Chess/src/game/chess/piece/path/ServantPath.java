@@ -5,7 +5,6 @@ import java.util.List;
 
 import game.chess.ChessMove;
 import game.chess.ChessPlayer;
-import game.chess.piece.ChessPiece;
 import game.chess.piece.ChessPieceController;
 import game.position.Position;
 
@@ -40,7 +39,7 @@ public class ServantPath extends PathFilter
 			List<ChessMove> validMoves = new ArrayList<ChessMove>();
 			
 			List<ChessPieceController> targetEnemies = new ArrayList<ChessPieceController>(); //Enemy pieces that can reach the King.
-			List<ChessMove> blockOptions = new ArrayList<ChessMove>(); //Board positions that can block the King.
+			List<ChessMove> blockOptions = new ArrayList<ChessMove>(); //Board positions that can protect the King.
 			
 			boolean canBlockKing = true;
 			

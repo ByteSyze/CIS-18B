@@ -10,9 +10,18 @@ public class ChessMove extends Position implements Cloneable
 	private ChessMove prevMove;
 	private ChessMove nextMove;
 	
+	private boolean isAttack = true;
+	
 	public ChessMove(float x, float y)
 	{
 		super(x,y);
+	}
+	
+	public ChessMove(float x, float y, boolean attack)
+	{
+		super(x,y);
+		
+		setAttack(attack);
 	}
 	
 	public ChessMove(Position position)
@@ -38,6 +47,16 @@ public class ChessMove extends Position implements Cloneable
 	public ChessMove getNextMove()
 	{
 		return nextMove;
+	}
+	
+	public boolean isAttack()
+	{
+		return isAttack;
+	}
+	
+	public void setAttack(boolean isAttack)
+	{
+		this.isAttack = isAttack;
 	}
 	
 	public List<ChessMove> asList()
@@ -74,7 +93,7 @@ public class ChessMove extends Position implements Cloneable
 	{
 		ChessMove chain = this;
 		
-		ChessMove clone = new ChessMove(getX(), getY());
+		ChessMove clone = new ChessMove(getX(), getY(), isAttack());
 		ChessMove cloneChain = clone;
 		
 		while(chain.getNextMove() != null)

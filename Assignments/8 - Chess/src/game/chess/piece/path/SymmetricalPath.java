@@ -17,6 +17,11 @@ public class SymmetricalPath extends PathFilter
 		return symmetrize(super.generateValidPath());
 	}
 	
+	public List<ChessMove> generatePredictivePath()
+	{
+		return symmetrize(super.generatePredictivePath());
+	}
+	
 	/**
 	 * Did you know symmetrize is a word?????
 	 * */

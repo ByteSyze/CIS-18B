@@ -68,6 +68,20 @@ public class ChessPlayer extends TurnBasedPlayer
 		}
 	}
 	
+	/**
+	 * Returns true if this player has at least one valid move to make.
+	 * */
+	public boolean hasValidMoves()
+	{
+		for(ChessPieceController c : getAlivePieces())
+		{
+			if(c.getModel().getValidMoves().size() > 0)
+				return true;
+		}
+		
+		return false;
+	}
+	
 	public Color getColor()
 	{
 		return color;
