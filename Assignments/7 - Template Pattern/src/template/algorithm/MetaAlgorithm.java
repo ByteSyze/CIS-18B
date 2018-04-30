@@ -33,7 +33,7 @@ public class MetaAlgorithm<A extends PipelinedAlgorithm<R,D,?,?>, R, D>
 	{
 		if(root == null)
 		{
-			root = root;
+			root = algorithm;
 			tail = root;
 		}
 		else
